@@ -9,6 +9,7 @@ class RoleSeeder extends Seeder
 {
     public function run()
     {
+        // Mengisi data awal role (admin, staff, borrower) ke tabel roles
         Role::insert([
             ['role_name' => 'admin'],
             ['role_name' => 'staff'],
