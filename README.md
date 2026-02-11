@@ -75,10 +75,11 @@ php artisan key:generate
 
 ## 5. Setup database in .env manually
 ## Then run migration
-php artisan migrate
+php artisan migrate --seed
 
 ## 6. Install frontend dependencies
 npm install
+npm run build
 
-## 7. Run Vite dev server
-npm run dev
+## 7. Run Laravel server
+composer run dev
