@@ -41,6 +41,7 @@ class BorrowerController extends Controller
             })
             ->latest()
             ->get();
+        // dd(compact('borrowings'));
 
         return view('borrower.borrowings.index', compact('borrowings'));
     }
@@ -72,7 +73,7 @@ class BorrowerController extends Controller
         }
 
         // Membuat data peminjaman
-        Borrowing::create([
+        $borrowing = Borrowing::create([
             'user_id'     => Auth::id(),
             'tool_id'     => $tool->id,
             'quantity'    => $request->quantity,
@@ -81,17 +82,11 @@ class BorrowerController extends Controller
             'status'      => 'pending',
         ]);
 
+        activity_log('borrowing tool, Id:' . $borrowing->id);
+
         return redirect()
             ->route('borrower.borrowings.index')
             ->with('success', 'Borrowing request submitted.');
-    }
-
-    // Menampilkan detail peminjaman
-    public function show(Borrowing $borrowing)
-    {
-        abort_if($borrowing->user_id !== Auth::user()->id, 403);
-
-        return view('borrower.borrowings.show', compact('borrowing'));
     }
 
     // Mengupdate peminjaman jika status masih pending
@@ -137,6 +132,8 @@ class BorrowerController extends Controller
             'due_date' => $request->due_date,
         ]);
 
+        activity_log('update borrowing data, Id:' . $borrowing->id);
+
         return redirect()
             ->route('borrower.borrowings.index')
             ->with('success', 'Borrowing updated successfully.');
@@ -157,6 +154,8 @@ class BorrowerController extends Controller
         $borrowing->update([
             'status' => 'returned',
         ]);
+
+        activity_log('returning tool (not confirmed), Id:' . $borrowing->id);
 
         return back()->with('success', 'Tool returned successfully. Waiting for staff confirmation.');
     }

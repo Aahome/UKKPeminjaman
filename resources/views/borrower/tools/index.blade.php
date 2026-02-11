@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Admin | Tool Management')
+@section('title', 'Available Tools')
 
 @section('dashboard-content')
     <div class="flex-1 p-8">
@@ -9,13 +9,14 @@
         <div class="flex justify-between items-center mb-8">
             <div>
                 <h2 class="text-2xl font-semibold text-slate-800">
-                    Tool Management
+                    Available Tools
                 </h2>
                 <p class="text-sm text-slate-500">
-                    Lorem Ipsum
+                    View and request tools for borrowing
                 </p>
             </div>
 
+            <!-- Profile -->
             <div class="relative">
                 <button onclick="toggleProfileMenu()" class="flex items-center gap-3 focus:outline-none">
                     <span class="text-sm text-slate-600">
@@ -39,11 +40,8 @@
             </div>
         </div>
 
-
-        <!-- Tools And Categories Table -->
-
         <!-- Search & Filter -->
-        <form method="GET" action="{{ route('admin.tools.index') }}" class="py-4 flex flex-wrap gap-3 items-center">
+        <form method="GET" action="{{ route('borrower.tools.index') }}" class="py-4 flex flex-wrap gap-3 items-center">
 
             <!-- Search Input -->
             <input type="text" name="search" value="{{ request('search') }}" placeholder="Search tool name..."
@@ -78,18 +76,14 @@
             </button>
         </form>
 
+        <!-- Tools Table -->
         <section class="bg-white rounded-xl shadow-sm">
 
             <!-- Header -->
-            <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+            <div class="px-6 py-4 border-b border-slate-200">
                 <h3 class="font-semibold text-slate-800">
                     Tool List
                 </h3>
-                <button type="button" onclick="openCreateCard()" class="text-sm text-blue-600 hover:underline">
-                    Add Tool
-                </button>
-
-
             </div>
 
             <!-- Table -->
@@ -141,32 +135,23 @@
 
                                 <!-- Action -->
                                 <td class="px-6 py-4 text-center">
-                                    <div class="flex justify-center gap-2">
+                                    @if ($tool->stock > 0)
                                         <button type="button" data-id="{{ $tool->id }}"
-                                            data-name="{{ $tool->tool_name }}" data-category="{{ $tool->category_id }}"
-                                            data-condition="{{ $tool->condition }}" data-stock="{{ $tool->stock }}"
-                                            onclick="openEditCard(this)"
-                                            class="px-3 py-1 text-xs rounded-md bg-amber-100 text-amber-700 hover:bg-amber-200">
-                                            Edit
+                                            data-name="{{ $tool->tool_name }}" onclick="openCreateCard(this)"
+                                            class="px-3 py-1 text-xs rounded-md bg-blue-100 text-blue-700 hover:bg-blue-200">
+                                            Borrow
                                         </button>
-
-
-                                        <form action="{{ route('admin.tools.destroy', $tool->id) }}" method="POST"
-                                            onsubmit="return confirm('Delete this tool?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit"
-                                                class="px-3 py-1 text-xs rounded-md bg-red-100 text-red-700 hover:bg-red-200">
-                                                Delete
-                                            </button>
-                                        </form>
-                                    </div>
+                                    @else
+                                        <span class="text-xs text-slate-400">
+                                            Out of Stock
+                                        </span>
+                                    @endif
                                 </td>
                             </tr>
                         @empty
                             <tr>
                                 <td colspan="6" class="px-6 py-6 text-center text-slate-500">
-                                    No tools found.
+                                    No tools available.
                                 </td>
                             </tr>
                         @endforelse
@@ -176,58 +161,32 @@
         </section>
     </div>
 
-    <!-- Add and Edit Modal -->
-    @include('admin.tools.create')
-    @include('admin.tools.edit')
-
-
+    @include('borrower.borrowings.create')
     <script>
-        function openCreateCard() {
-            const form = document.getElementById('createForm');
-            form.action = "{{ route('admin.tools.store') }}";
-            document.getElementById('createToolCard').hidden = false;
+        function openCreateCard(button) {
+            const id = button.dataset.id;
 
+            const form = document.getElementById('createForm');
+            form.reset();
+
+            form.action = `/borrower/borrowings/${id}`;
+
+            document.getElementById('createBorrowCard').hidden = false;
+
+            document.getElementById('createToolId').value = id;
+            document.getElementById('createToolName').value = button.dataset.name;
         }
 
         function closeCreateCard() {
-            document.getElementById('createToolCard').hidden = true;
-        }
-
-        function openEditCard(button) {
-            const id = button.dataset.id;
-
-            document.getElementById('editForm').action = `/admin/tools/${id}`;
-            document.getElementById('editToolId').value = id;
-
-            document.getElementById('editToolName').value = button.dataset.name;
-            document.getElementById('editToolCategory').value = button.dataset.category;
-            document.getElementById('editToolCondition').value = button.dataset.condition;
-            document.getElementById('editToolStock').value = button.dataset.stock;
-
-            document.getElementById('editToolCard').hidden = false;
-        }
-
-        function closeEditCard() {
-            document.getElementById('editToolCard').hidden = true;
+            document.getElementById('createBorrowCard').hidden = true;
         }
     </script>
+
 
     @if (session('open_create'))
         <script>
             document.addEventListener('DOMContentLoaded', () => {
-                document.getElementById('createToolCard').hidden = false;
-            });
-        </script>
-    @endif
-
-    @if (session('open_edit') && old('tool_id'))
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                const id = "{{ old('tool_id') }}";
-                const form = document.getElementById('editForm');
-
-                form.action = `/admin/tools/${id}`;
-                document.getElementById('editToolCard').hidden = false;
+                document.getElementById('createUserCard').hidden = false;
             });
         </script>
     @endif

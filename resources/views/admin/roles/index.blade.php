@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Roles')
+@section('title', 'Admin | Role Management')
 
 @section('dashboard-content')
 <div class="flex-1 p-8">

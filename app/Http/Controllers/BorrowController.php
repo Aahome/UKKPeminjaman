@@ -57,19 +57,22 @@ class BorrowController extends Controller
                 ->withErrors($validator)
                 ->withInput()
                 ->with('open_create', true)
-                ->with('form_context', 'create');
+                ->with('form_context', 'create')
+                ->with('error', 'Please check the form. Some fields are invalid.');
         }
 
         $tool = Tool::findOrFail($request->tool_id);
 
         // Cek stok jika status langsung approved
-        if ($request->status === 'approved' && $tool->stock < 1 || $request->quantity > $tool->stock) {
+        if ($request->status === 'approved' && $request->quantity > $tool->stock) {
             return back()
                 ->withErrors(['tool_id' => 'Tool stock is not available'])
                 ->withInput()
                 ->with('open_create', true)
-                ->with('form_context', 'create');
+                ->with('form_context', 'create')
+                ->with('error', 'Tool stock is not available.');
         }
+
 
         // Membuat data borrowing
         $borrowing = Borrowing::create([
@@ -149,8 +152,10 @@ class BorrowController extends Controller
                 ->withErrors($validator)
                 ->withInput()
                 ->with('open_edit', true)
-                ->with('form_context', 'edit');
+                ->with('form_context', 'edit')
+                ->with('error', 'Please check the form. Some fields are invalid.');
         }
+
 
         $oldStatus = $borrow->status;
         $newStatus = $request->status;
@@ -171,7 +176,7 @@ class BorrowController extends Controller
 
         // Tentukan apakah perlu pengurangan stok
         $shouldDecrement = (!in_array($oldStatus, ['approved', 'returned']) && $newStatus === 'approved') ||
-        ($oldStatus === 'returned' && $newStatus === 'approved' && $borrow->returnData);
+            ($oldStatus === 'returned' && $newStatus === 'approved' && $borrow->returnData);
 
         // Jika perlu mengurangi stok
         if ($shouldDecrement) {
@@ -180,7 +185,8 @@ class BorrowController extends Controller
                     ->withErrors(['tool_id' => 'Tool stock is not available'])
                     ->withInput()
                     ->with('open_edit', true)
-                    ->with('form_context', 'edit');
+                    ->with('form_context', 'edit')
+                    ->with('error', 'Tool stock is not available.');
             }
 
             $newTool->decrement('stock', $qty);
@@ -217,6 +223,8 @@ class BorrowController extends Controller
             }
         }
 
+        activity_log('updated borrow data, Id:' . $borrow->id);
+
         return redirect()
             ->route('admin.borrowings.index')
             ->with('success', 'Borrowing updated successfully');
@@ -231,6 +239,8 @@ class BorrowController extends Controller
 
         $borrow->delete();
 
+        activity_log('deleted borrow data, Id:' . $borrow->id);
+
         return back()->with('success', 'Borrowing deleted');
     }
 
@@ -238,12 +248,16 @@ class BorrowController extends Controller
     public function approve(Borrowing $borrowing)
     {
         if ($borrowing->status !== 'pending') {
-            return back();
+            return back()->with('error', 'Only pending borrowings can be approved.');
         }
 
-        if ($borrowing->tool->stock < 1) {
-            return back()->withErrors(['stock' => 'Tool stock not available']);
+
+        if ($borrowing->tool->stock < $borrowing->quantity) {
+            return back()
+                ->withErrors(['stock' => 'Tool stock not available'])
+                ->with('error', 'Tool stock not available.');
         }
+
 
         $borrowing->update([
             'status' => 'approved',
@@ -258,7 +272,9 @@ class BorrowController extends Controller
     public function reject(Request $request, Borrowing $borrowing)
     {
         if ($borrowing->status !== 'pending') {
-            return back()->withErrors('Only pending borrowings can be rejected.');
+            return back()
+                ->withErrors(['status' => 'Only pending borrowings can be rejected.'])
+                ->with('error', 'Only pending borrowings can be rejected.');
         }
 
         $request->validate([
