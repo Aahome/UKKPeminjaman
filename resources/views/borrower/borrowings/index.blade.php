@@ -185,6 +185,7 @@
             document.getElementById('editBorrowId').value = id;
 
             document.getElementById('editToolName').value = button.dataset.name;
+            document.getElementById('editQuantity').value = button.dataset.quantity;
             document.getElementById('editBorrowDate').value = button.dataset.borrow;
             document.getElementById('editDueDate').value = button.dataset.due;
 
