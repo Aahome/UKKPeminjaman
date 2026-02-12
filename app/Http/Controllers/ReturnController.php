@@ -8,6 +8,7 @@ use App\Models\ReturnModel;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ReturnController extends Controller
 {
@@ -16,7 +17,7 @@ class ReturnController extends Controller
      */
     public function index()
     {
-        $borrowings = Borrowing::with(['user', 'tool','returnData'])
+        $borrowings = Borrowing::with(['user', 'tool', 'returnData'])
             ->whereIn('status', ['approved', 'returned'])
             ->latest()
             ->get();
@@ -32,13 +33,11 @@ class ReturnController extends Controller
         $today   = Carbon::today(); // Tanggal hari ini
         $dueDate = Carbon::parse($borrowing->due_date); // Tanggal jatuh tempo
 
-        // Menghitung jumlah hari keterlambatan
-        $lateDays = $today->greaterThan($dueDate)
-            ? $today->diffInDays($dueDate)
-            : 0;
 
         // Menghitung total denda (Rp5000 × hari terlambat × jumlah alat)
-        $fine = $lateDays * 5000 * $borrowing->quantity;
+        $fine = DB::selectOne("
+        SELECT count_fine(?, ?, ?) AS total
+        ", [$dueDate, $today, $borrowing->quantity])->total;
 
         // Menyimpan data pengembalian
         ReturnModel::create([
@@ -83,8 +82,9 @@ class ReturnController extends Controller
 
         // Menghitung ulang denda berdasarkan tanggal baru
         if ($returnDate->greaterThan($dueDate)) {
-            $lateDays = $dueDate->diffInDays($returnDate);
-            $fine = $lateDays * 5000 * $return->borrowing->quantity;
+            $fine = DB::selectOne("
+            SELECT count_fine(?, ?, ?) AS total
+            ", [$dueDate, $returnDate, $return->borrowing->quantity])->total;
         } else {
             $fine = 0;
         }

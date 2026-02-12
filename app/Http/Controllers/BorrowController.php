@@ -5,9 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Borrowing;
 use App\Models\ReturnModel;
 use App\Models\Tool;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class BorrowController extends Controller
 {
@@ -90,11 +91,15 @@ class BorrowController extends Controller
             $today    = Carbon::today();
             $dueDate  = Carbon::parse($borrowing->due_date);
 
-            $lateDays = $today->gt($dueDate)
-                ? $dueDate->diffInDays($today)
-                : 0;
+            // $lateDays = $today->gt($dueDate)
+            //     ? $dueDate->diffInDays($today)
+            //     : 0;
 
-            $fine = $lateDays * 5000 * $request->quantity;
+            // $fine = $lateDays * 5000 * $request->quantity;
+
+            $fine = DB::selectOne("
+            SELECT count_fine(?, ?, ?) AS total
+            ", [$dueDate, $today, $request->quantity])->total;
 
             ReturnModel::create([
                 'borrowing_id' => $borrowing->id,

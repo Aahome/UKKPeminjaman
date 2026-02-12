@@ -71,12 +71,11 @@
                                     $fine = $borrowing->returnData->fine;
                                 } else {
                                     // Not returned yet → calculate live
-                                    $lateDays = $today->greaterThan($due) ? $today->diffInDays($due) : 0;
-                                    $fine = $lateDays * 5000 * $borrowing->quantity;
+                                    $fine = DB::selectOne("
+                                    SELECT count_fine(?, ?, ?) AS total
+                                    ", [$due, $today, $borrowing->quantity])->total;
                                 }
                             @endphp
-
-
 
                             <tr class="hover:bg-slate-50">
                                 <td class="px-6 py-4">{{ $loop->iteration }}</td>
