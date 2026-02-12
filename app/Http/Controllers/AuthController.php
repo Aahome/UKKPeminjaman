@@ -38,8 +38,8 @@ class AuthController extends Controller
 
         // Jika login gagal, kembali ke halaman sebelumnya dengan error
         return back()
-            ->withErrors(['email' => 'Incorrect email or password'])
-            ->onlyInput('email'); // Menyimpan kembali input email saja
+            ->withErrors(['name' => 'Incorrect name or password'])
+            ->onlyInput('name'); // Menyimpan kembali input email saja
     }
 
     /**
