@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('activity');
+            $table->json('old_data')->nullable(); // Store record before change
+            $table->json('new_data')->nullable(); // Store record after change
             $table->timestamps();
         });
     }

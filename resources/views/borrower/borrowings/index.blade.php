@@ -72,6 +72,8 @@
                             <th class="px-6 py-3 text-left">Due Date</th>
                             <th class="px-6 py-3 text-left">Fine</th>
                             <th class="px-6 py-3 text-left">Status</th>
+                            <th class="px-6 py-3 text-center">Created At</th>
+                            <th class="px-6 py-3 text-center">Updated At</th>
                             <th class="px-6 py-3 text-center w-48">Action</th>
                         </tr>
                     </thead>
@@ -118,6 +120,14 @@
                                     <span class="px-3 py-1 text-xs rounded-full {{ $statusColor }}">
                                         {{ ucfirst($borrowing->status) }}
                                     </span>
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    {{ $borrowing->created_at }}
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    {{ $borrowing->updated_at }}
                                 </td>
 
                                 <!-- Actions -->

@@ -21,7 +21,31 @@ class CategorySeeder extends Seeder
 
         // Menambahkan kategori Hand Tool
         Category::create([
-            'category_name'  => 'Hand Tool',
+            'category_name'  => 'School Furniture',
+            'description'    => '-blblbl',
+        ]);
+
+        // Menambahkan kategori Hand Tool
+        Category::create([
+            'category_name'  => 'Laboratory Equipment',
+            'description'    => '-blblbl',
+        ]);
+
+        // Menambahkan kategori Hand Tool
+        Category::create([
+            'category_name'  => 'Props',
+            'description'    => '-blblbl',
+        ]);
+
+        // Menambahkan kategori Hand Tool
+        Category::create([
+            'category_name'  => 'Sports Equipment',
+            'description'    => '-blblbl',
+        ]);
+
+        // Menambahkan kategori Hand Tool
+        Category::create([
+            'category_name'  => 'Books',
             'description'    => '-blblbl',
         ]);
     }

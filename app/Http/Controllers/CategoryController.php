@@ -47,8 +47,6 @@ class CategoryController extends Controller
             'description'   => $request->description,
         ]);
 
-        activity_log('added new category , Id:' . $category->id);
-
         return redirect()
             ->route('admin.categories.index')
             ->with('success', 'Category added successfully');
@@ -81,8 +79,6 @@ class CategoryController extends Controller
             'description'   => $request->description,
         ]);
 
-        activity_log('Updated category , Id:' . $category->id);
-
         return redirect()
             ->route('admin.categories.index')
             ->with('success', 'Category updated successfully');
@@ -95,8 +91,6 @@ class CategoryController extends Controller
     {
         // Hapus kategori
         $category->delete();
-
-        activity_log('Deleted category , Id:' . $category->id);
 
         return back()->with('success', 'Category deleted');
     }

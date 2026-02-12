@@ -57,8 +57,6 @@ class UserController extends Controller
             'role_id'  => $request->role_id,
         ]);
 
-        activity_log('Added new user, Id:' . $user->id);
-
         return redirect()
             ->route('admin.users.index')
             ->with('success', 'User created successfully.');
@@ -94,10 +92,13 @@ class UserController extends Controller
             unset($validated['password']);
         }
 
+        if ($user->role->role_name === 'admin' && $request->role_id != $user->role_id) {
+            return back()->with('error', 'Admin role cannot be changed.');
+        }
+
+
         // Update data user
         $user->update($validated);
-
-        activity_log('user updated, Id:' . $user->id);
 
         return redirect()
             ->route('admin.users.index')
@@ -108,8 +109,6 @@ class UserController extends Controller
     {
         // Menghapus data user berdasarkan model binding
         $user->delete();
-
-        activity_log('user deleted, Id:' . $user->id);
 
         // Redirect kembali ke halaman sebelumnya dengan pesan sukses
         return back()->with('success', 'user deleted');

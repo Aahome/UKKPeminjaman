@@ -17,6 +17,8 @@
                         <th class="px-6 py-3 text-left">Return Date</th>
                         <th class="px-6 py-3 text-left">Late (Days)</th>
                         <th class="px-6 py-3 text-left">Fine</th>
+                        <th class="px-6 py-3 text-center">Created At</th>
+                        <th class="px-6 py-3 text-center">Updated At</th>
                         <th class="px-6 py-3 text-center">Action</th>
                     </tr>
                 </thead>
@@ -54,13 +56,19 @@
                                 Rp {{ number_format($return->fine, 0, ',', '.') }}
                             </td>
 
+                            <td class="px-6 py-4">
+                                {{ $return->created_at }}
+                            </td>
+
+                            <td class="px-6 py-4">
+                                {{ $return->updated_at }}
+                            </td>
+
                             <!-- Action -->
                             <td class="px-6 py-4 text-center">
                                 <div class="flex justify-center gap-2">
-                                    <button type="button" 
-                                        data-id="{{ $return->id }}"
-                                        data-return_date="{{ $return->return_date }}"
-                                        onclick="openReturnEditCard(this)"
+                                    <button type="button" data-id="{{ $return->id }}"
+                                        data-return_date="{{ $return->return_date }}" onclick="openReturnEditCard(this)"
                                         class="px-3 py-1 text-xs rounded-md bg-amber-100 text-amber-700 hover:bg-amber-200">
                                         Edit
                                     </button>

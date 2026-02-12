@@ -39,8 +39,6 @@ class RoleController extends Controller
             'role_name' => $request->role_name,
         ]);
 
-        activity_log('role updated, Id:' . $role->id);
-
         return redirect()
             ->route('admin.roles.index')
             ->with('success', 'Role created successfully');
@@ -69,8 +67,6 @@ class RoleController extends Controller
             'role_name' => $request->role_name,
         ]);
 
-        activity_log('role updated, Id:' . $role->id);
-
         return redirect()
             ->route('admin.roles.index')
             ->with('success', 'Role updated successfully');
@@ -83,8 +79,6 @@ class RoleController extends Controller
         // Hapus role
         $role->delete();
         
-        activity_log('role deleted, Id:' . $role->id);
-
         return back()->with('success', 'Role deleted');
     }
 }

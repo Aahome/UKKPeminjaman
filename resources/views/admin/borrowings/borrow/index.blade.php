@@ -26,6 +26,8 @@
                         <th class="px-6 py-3 text-left">Due Date</th>
                         <th class="px-6 py-3 text-left">Fine</th>
                         <th class="px-6 py-3 text-center">Status</th>
+                        <th class="px-6 py-3 text-center">Created At</th>
+                        <th class="px-6 py-3 text-center">Updated At</th>
                         <th class="px-6 py-3 text-center">Action</th>
                     </tr>
                 </thead>
@@ -106,6 +108,14 @@
                                         Confirmed
                                     </div>
                                 @endif
+                            </td>
+
+                            <td class="px-6 py-4">
+                                {{ $borrowing->created_at }}
+                            </td>
+
+                            <td class="px-6 py-4">
+                                {{ $borrowing->updated_at }}
                             </td>
 
                             <!-- Action -->

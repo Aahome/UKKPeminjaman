@@ -16,7 +16,7 @@ class ReturnController extends Controller
      */
     public function index()
     {
-        $borrowings = Borrowing::with(['user', 'tool'])
+        $borrowings = Borrowing::with(['user', 'tool','returnData'])
             ->whereIn('status', ['approved', 'returned'])
             ->latest()
             ->get();
@@ -49,8 +49,6 @@ class ReturnController extends Controller
 
         // Mengembalikan stok alat
         $borrowing->tool->increment('stock', $borrowing->quantity);
-
-        activity_log('returned tool (confirmed) , Id:' . $borrowing->id);
 
         return back()
             ->with('view', 'return')
@@ -97,8 +95,6 @@ class ReturnController extends Controller
             'fine'        => $fine,
         ]);
 
-        activity_log('return updated, Id:' . $return->id);
-
         return redirect()
             ->route('admin.borrowings.index')
             ->with('view', 'return')
@@ -120,8 +116,6 @@ class ReturnController extends Controller
 
         // Menghapus data pengembalian
         $return->delete();
-
-        activity_log('return deleted, Id:' . $return->id);
 
         return back()
             ->with('view', 'return')

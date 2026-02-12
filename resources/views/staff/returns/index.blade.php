@@ -52,6 +52,8 @@
                             <th class="px-6 py-3 text-left">Late (Days)</th>
                             <th class="px-6 py-3 text-left">Returned</th>
                             <th class="px-6 py-3 text-left">Fine</th>
+                            <th class="px-6 py-3 text-center">Created At</th>
+                            <th class="px-6 py-3 text-center">Updated At</th>
                             <th class="px-6 py-3 text-center">Action</th>
                         </tr>
                     </thead>
@@ -113,6 +115,22 @@
 
                                 <td class="px-6 py-4 text-red-600 font-semibold">
                                     Rp {{ number_format($fine, 0, ',', '.') }}
+                                </td>
+                                
+                                <td class="px-6 py-4">
+                                    @if ($borrowing->returnData)
+                                        {{ \Carbon\Carbon::parse($borrowing->returnData->created_at)->timezone('Asia/Jakarta')->format('d M Y H:i') }}
+                                    @else
+                                        -
+                                    @endif
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    @if ($borrowing->returnData)
+                                        {{ \Carbon\Carbon::parse($borrowing->returnData->updated_at)->timezone('Asia/Jakarta')->format('d M Y H:i') }}
+                                    @else
+                                        -
+                                    @endif
                                 </td>
 
                                 <td class="px-6 py-4 text-center">

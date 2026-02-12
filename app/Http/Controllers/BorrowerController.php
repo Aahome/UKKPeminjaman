@@ -100,8 +100,6 @@ class BorrowerController extends Controller
             'status'      => 'pending',
         ]);
 
-        activity_log('borrowing tool, Id:' . $borrowing->id);
-
         return redirect()
             ->route('borrower.borrowings.index')
             ->with('success', 'Borrowing request submitted.');
@@ -151,8 +149,6 @@ class BorrowerController extends Controller
             'due_date' => $request->due_date,
         ]);
 
-        activity_log('update borrowing data, Id:' . $borrowing->id);
-
         return redirect()
             ->route('borrower.borrowings.index')
             ->with('success', 'Borrowing updated successfully.');
@@ -173,8 +169,6 @@ class BorrowerController extends Controller
         $borrowing->update([
             'status' => 'returned',
         ]);
-
-        activity_log('returning tool (not confirmed), Id:' . $borrowing->id);
 
         return back()->with('success', 'Tool returned successfully. Waiting for staff confirmation.');
     }
@@ -199,8 +193,6 @@ class BorrowerController extends Controller
         //     ]);
         // }
         $borrowing->delete();
-
-        activity_log('borrowing deleted, Id:' . $borrowing->id);
 
         return back()->with('success', 'Borrowing deleted successfully.');
     }

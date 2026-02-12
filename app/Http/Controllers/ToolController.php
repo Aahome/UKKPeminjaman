@@ -60,8 +60,6 @@ class ToolController extends Controller
             'stock'
         ]));
 
-        activity_log('Added new tool , Id:' . $tool->id);
-
         return redirect()
             ->route('admin.tools.index')
             ->with('success', 'Tool added successfully');
@@ -98,8 +96,6 @@ class ToolController extends Controller
             'stock'
         ]));
 
-        activity_log('Updated tool , Id:' . $tool->id);
-        
         return redirect()
             ->route('admin.tools.index')
             ->with('success', 'Tool updated successfully');
@@ -111,8 +107,6 @@ class ToolController extends Controller
     public function destroy(Tool $tool)
     {
         $tool->delete();
-
-        activity_log('tool deleted, Id:' . $tool->id);
 
         return back()->with('success', 'Tool deleted');
     }

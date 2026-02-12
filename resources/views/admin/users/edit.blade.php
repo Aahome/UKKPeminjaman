@@ -58,18 +58,32 @@
                                @error('role_id') border-red-400 @enderror"
                     required>
 
+                    @php
+                        $editingUser = $user ?? null; // pastikan $user tersedia
+                    @endphp
+
                     @if ($roles->isEmpty())
-                        <option disabled selected>
-                            No Roles Yet.
-                        </option>
+                        <option disabled selected>No Roles Yet.</option>
                     @else
                         <option value="">Select Role</option>
+
                         @foreach ($roles as $role)
-                            <option value="{{ $role->id }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>
-                                {{ ucfirst($role->role_name) }}
-                            </option>
+                            {{-- Jika user yang diedit adalah admin, hanya tampilkan admin --}}
+                            @if ($editingUser && $editingUser->role->role_name === 'admin')
+                                @if ($role->role_name === 'admin')
+                                    <option value="{{ $role->id }}" selected>
+                                        {{ ucfirst($role->role_name) }}
+                                    </option>
+                                @endif
+                            @else
+                                <option value="{{ $role->id }}"
+                                    {{ old('role_id', $editingUser->role_id ?? '') == $role->id ? 'selected' : '' }}>
+                                    {{ ucfirst($role->role_name) }}
+                                </option>
+                            @endif
                         @endforeach
                     @endif
+
                 </select>
 
                 @error('role_id')

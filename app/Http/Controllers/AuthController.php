@@ -23,7 +23,7 @@ class AuthController extends Controller
     {
         // Validasi input email dan password dari form login
         $credentials = $request->validate([
-            'email'    => 'required|email',
+            'name'    => 'required',
             'password' => 'required'
         ]);
 

@@ -131,7 +131,8 @@
                                     <div class="flex justify-center gap-2">
                                         <button type="button" data-id="{{ $user->id }}"
                                             data-name="{{ $user->name }}" data-email="{{ $user->email }}"
-                                            data-role="{{ $user->role_id }}" onclick="openEditCard(this)"
+                                            data-role="{{ $user->role_id }}" data-rolename="{{ $user->role->role_name }}"
+                                            onclick="openEditCard(this)"
                                             class="px-3 py-1 text-xs rounded-md bg-amber-100 text-amber-700 hover:bg-amber-200">
                                             Edit
                                         </button>
@@ -181,16 +182,35 @@
 
         function openEditCard(button) {
             const id = button.dataset.id;
+            const roleId = button.dataset.role;
+            const roleName = button.dataset.rolename;
 
             document.getElementById('editForm').action = `/admin/users/${id}`;
             document.getElementById('editUserId').value = id;
-
             document.getElementById('editUserName').value = button.dataset.name;
             document.getElementById('editUserEmail').value = button.dataset.email;
-            document.getElementById('editUserRole').value = button.dataset.role;
+
+            const roleSelect = document.getElementById('editUserRole');
+
+            // Reset dulu semua option
+            for (let option of roleSelect.options) {
+                option.hidden = false;
+            }
+
+            // Jika user yang diedit adalah admin
+            if (roleName === 'admin') {
+                for (let option of roleSelect.options) {
+                    if (option.text.toLowerCase() !== 'admin') {
+                        option.hidden = true;
+                    }
+                }
+            }
+
+            roleSelect.value = roleId;
 
             document.getElementById('editUserCard').hidden = false;
         }
+
 
         function closeEditCard() {
             document.getElementById('editUserCard').hidden = true;

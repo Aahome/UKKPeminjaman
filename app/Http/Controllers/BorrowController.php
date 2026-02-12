@@ -108,8 +108,6 @@ class BorrowController extends Controller
             $tool->decrement('stock', $request->quantity);
         }
 
-        // Mencatat aktivitas
-        activity_log('added new borrow data, Id:' . $borrowing->id);
 
         return redirect()
             ->route('admin.borrowings.index')
@@ -223,8 +221,6 @@ class BorrowController extends Controller
             }
         }
 
-        activity_log('updated borrow data, Id:' . $borrow->id);
-
         return redirect()
             ->route('admin.borrowings.index')
             ->with('success', 'Borrowing updated successfully');
@@ -238,8 +234,6 @@ class BorrowController extends Controller
         }
 
         $borrow->delete();
-
-        activity_log('deleted borrow data, Id:' . $borrow->id);
 
         return back()->with('success', 'Borrowing deleted');
     }
@@ -265,8 +259,6 @@ class BorrowController extends Controller
 
         $borrowing->tool->decrement('stock', $borrowing->quantity);
 
-        activity_log('borrowing approved, Id:' . $borrowing->id);
-
         return back()->with('success', 'Borrowing approved');
     }
 
@@ -287,8 +279,6 @@ class BorrowController extends Controller
             'status' => 'rejected',
             'rejection_reason' => $request->rejection_reason,
         ]);
-
-        activity_log('borrowing rejected, Id:' . $borrowing->id);
 
         return back()->with('success', 'Borrowing rejected successfully.');
     }

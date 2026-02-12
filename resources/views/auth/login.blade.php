@@ -27,10 +27,10 @@
 
             <!-- Email input -->
             <div>
-                <label class="text-sm text-slate-600">Email</label>
-                <input type="email"
-                    name="email"
-                    value="{{ old('email') }}"
+                <label class="text-sm text-slate-600">Name</label>
+                <input type="text"
+                    name="name"
+                    value="{{ old('name') }}"
                     class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring focus:ring-blue-200 focus:border-blue-500 outline-none"
                     required>
             </div>
@@ -45,7 +45,7 @@
             </div>
 
             <!-- Error message (login failed) -->
-            @error('email')
+            @error('name')
             <div id="login-error" class="rounded-lg bg-red-500 mt-2 p-2 items-center text-center justify-center">
                 <p class="text-sm text-white text-center ">
                     {{ $message }}
