@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\models\User;
+use App\models\Tool;
+use App\models\ReturnModel;
 
 class Borrowing extends Model
 {

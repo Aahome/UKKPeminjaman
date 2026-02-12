@@ -28,14 +28,6 @@ class UserController extends Controller
         return view('admin.users.index', compact('users', 'roles'));
     }
 
-    public function create()
-    {
-        // Mengambil data role untuk ditampilkan pada form create
-        $roles = Role::all();
-
-        return view('admin.users.create', compact('roles'));
-    }
-
     // Menyimpan data user baru ke database
     public function store(Request $request)
     {
@@ -52,17 +44,20 @@ class UserController extends Controller
             return back()
                 ->withErrors($validator)
                 ->withInput()
+                ->with('error', 'Please check the form. Some fields are invalid.')
                 ->with('open_create', true)
                 ->with('form_context', 'create');
         }
 
         // Menyimpan user baru dengan password yang telah di-hash
-        User::create([
+        $user = User::create([
             'name'     => $request->name,
             'email'    => $request->email,
             'password' => Hash::make($request->password),
             'role_id'  => $request->role_id,
         ]);
+
+        activity_log('Added new user, Id:' . $user->id);
 
         return redirect()
             ->route('admin.users.index')
@@ -85,6 +80,7 @@ class UserController extends Controller
             return back()
                 ->withErrors($validator)
                 ->withInput()
+                ->with('error', 'Please check the form. Some fields are invalid.')
                 ->with('open_edit', true)
                 ->with('form_context', 'edit');
         }
@@ -101,6 +97,8 @@ class UserController extends Controller
         // Update data user
         $user->update($validated);
 
+        activity_log('user updated, Id:' . $user->id);
+
         return redirect()
             ->route('admin.users.index')
             ->with('success', 'User updated successfully.');
@@ -111,7 +109,9 @@ class UserController extends Controller
         // Menghapus data user berdasarkan model binding
         $user->delete();
 
+        activity_log('user deleted, Id:' . $user->id);
+
         // Redirect kembali ke halaman sebelumnya dengan pesan sukses
-        return back()->with('success', 'Tool deleted');
+        return back()->with('success', 'user deleted');
     }
 }

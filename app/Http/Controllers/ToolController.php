@@ -21,22 +21,12 @@ class ToolController extends Controller
             ->when($request->filled('category'), function ($q) use ($request) {
                 $q->where('category_id', $request->category);
             })
-            ->get();
+            ->paginate(10);
 
         // Mengambil seluruh kategori untuk kebutuhan filter
         $categories = Category::all();
 
         return view('admin.tools.index', compact('tools', 'categories'));
-    }
-
-    /**
-     * Menampilkan halaman form tambah alat
-     */
-    public function create()
-    {
-        return view('admin.tools.create', [
-            'categories' => Category::all()
-        ]);
     }
 
     /**
@@ -57,32 +47,24 @@ class ToolController extends Controller
             return back()
                 ->withErrors($validator)
                 ->withInput()
+                ->with('error', 'Please check the form. Some fields are invalid.')
                 ->with('open_create', true)
                 ->with('form_context', 'create');
         }
 
         // Membuat data alat baru
-        Tool::create($request->only([
+        $tool = Tool::create($request->only([
             'tool_name',
             'category_id',
             'condition',
             'stock'
         ]));
 
+        activity_log('Added new tool , Id:' . $tool->id);
+
         return redirect()
             ->route('admin.tools.index')
             ->with('success', 'Tool added successfully');
-    }
-
-    /**
-     * Menampilkan halaman edit alat
-     */
-    public function edit(Tool $tool)
-    {
-        return view('admin.tools.edit', [
-            'tool' => $tool,
-            'categories' => Category::all()
-        ]);
     }
 
     /**
@@ -103,6 +85,7 @@ class ToolController extends Controller
             return back()
                 ->withErrors($validator)
                 ->withInput()
+                ->with('error', 'Please check the form. Some fields are invalid.')
                 ->with('open_edit', true)
                 ->with('form_context', 'edit');
         }
@@ -115,6 +98,8 @@ class ToolController extends Controller
             'stock'
         ]));
 
+        activity_log('Updated tool , Id:' . $tool->id);
+        
         return redirect()
             ->route('admin.tools.index')
             ->with('success', 'Tool updated successfully');
@@ -126,6 +111,8 @@ class ToolController extends Controller
     public function destroy(Tool $tool)
     {
         $tool->delete();
+
+        activity_log('tool deleted, Id:' . $tool->id);
 
         return back()->with('success', 'Tool deleted');
     }

@@ -29,14 +29,17 @@ class RoleController extends Controller
             return back()
                 ->withErrors($validator)
                 ->withInput()
+                ->with('error', 'Please check the form. Some fields are invalid.')
                 ->with('open_create', true)
                 ->with('form_context', 'create');
         }
 
         // Membuat role baru
-        Role::create([
+        $role = Role::create([
             'role_name' => $request->role_name,
         ]);
+
+        activity_log('role updated, Id:' . $role->id);
 
         return redirect()
             ->route('admin.roles.index')
@@ -56,6 +59,7 @@ class RoleController extends Controller
             return back()
                 ->withErrors($validator)
                 ->withInput()
+                ->with('error', 'Please check the form. Some fields are invalid.')
                 ->with('open_edit', true)
                 ->with('form_context', 'edit');
         }
@@ -65,6 +69,8 @@ class RoleController extends Controller
             'role_name' => $request->role_name,
         ]);
 
+        activity_log('role updated, Id:' . $role->id);
+
         return redirect()
             ->route('admin.roles.index')
             ->with('success', 'Role updated successfully');
@@ -73,15 +79,11 @@ class RoleController extends Controller
     // Menghapus role jika tidak sedang digunakan oleh user
     public function destroy(Role $role)
     {
-        // Cegah penghapusan jika role masih memiliki relasi user
-        if ($role->users()->exists()) {
-            return back()->withErrors([
-                'error' => 'Role is still used by users'
-            ]);
-        }
 
         // Hapus role
         $role->delete();
+        
+        activity_log('role deleted, Id:' . $role->id);
 
         return back()->with('success', 'Role deleted');
     }

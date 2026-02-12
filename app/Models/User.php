@@ -4,6 +4,10 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Role;
+use App\Models\Borrowing;
+use App\Models\ActivityLog;
+
 
 class User extends Authenticatable
 {

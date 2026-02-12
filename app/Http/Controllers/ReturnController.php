@@ -50,7 +50,11 @@ class ReturnController extends Controller
         // Mengembalikan stok alat
         $borrowing->tool->increment('stock', $borrowing->quantity);
 
-        return back()->with('success', 'Tool returned successfully');
+        activity_log('returned tool (confirmed) , Id:' . $borrowing->id);
+
+        return back()
+            ->with('view', 'return')
+            ->with('success', 'Tool returned successfully');
     }
 
     /**
@@ -60,7 +64,7 @@ class ReturnController extends Controller
     {
         // Validasi tanggal pengembalian
         $validator = Validator::make($request->all(), [
-            'return_date' => 'required|date|after_or_equal:' . $return->borrowing->due_date,
+            'return_date' => 'required|date|after_or_equal:' . $return->borrowing->borrow_date,
         ]);
 
         // Jika validasi gagal, kembali dengan error dan buka modal edit
@@ -69,9 +73,10 @@ class ReturnController extends Controller
                 ->back()
                 ->withErrors($validator)
                 ->withInput()
+                ->with('error', 'Please check the form. Some fields are invalid.')
                 ->with('view', 'return')
                 ->with('open_edit', true)
-                ->withInput(['return_id' => $return->id]);
+                ->with('form_context', 'edit');
         }
 
         // Parsing tanggal
@@ -92,8 +97,11 @@ class ReturnController extends Controller
             'fine'        => $fine,
         ]);
 
+        activity_log('return updated, Id:' . $return->id);
+
         return redirect()
-            ->route('admin.returns.index')
+            ->route('admin.borrowings.index')
+            ->with('view', 'return')
             ->with('success', 'Return data updated successfully');
     }
 
@@ -102,6 +110,7 @@ class ReturnController extends Controller
      */
     public function destroy(ReturnModel $return)
     {
+        // dd($borrowing = $return->borrowing, $return->id);
         $borrowing = $return->borrowing;
 
         // Mengubah status peminjaman kembali menjadi pending
@@ -112,6 +121,10 @@ class ReturnController extends Controller
         // Menghapus data pengembalian
         $return->delete();
 
-        return back()->with('success', 'Return data deleted and borrowing reverted.');
+        activity_log('return deleted, Id:' . $return->id);
+
+        return back()
+            ->with('view', 'return')
+            ->with('success', 'Return data deleted and borrowing reverted.');
     }
 }

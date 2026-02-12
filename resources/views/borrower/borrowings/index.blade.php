@@ -133,6 +133,17 @@
                                                 class="px-3 py-1 text-xs rounded-md bg-amber-100 text-amber-700 hover:bg-amber-200">
                                                 Edit
                                             </button>
+
+                                            <form action="{{ route('borrower.borrowings.destroy', $borrowing->id) }}"
+                                                method="POST"
+                                                onsubmit="return confirm('Delete this borrowing? (only when the status is pending or returned (confirmed))')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                    class="px-3 py-1 text-xs rounded-md bg-red-100 text-red-700 hover:bg-red-200">
+                                                    Delete
+                                                </button>
+                                            </form>
                                         @endif
 
                                         @if ($borrowing->status === 'approved')
@@ -150,9 +161,21 @@
                                                 Awaiting Return Confirmation
                                             </span>
                                         @elseif ($borrowing->returnData)
-                                            <span class="text-xs text-slate-400">
-                                                Completed
-                                            </span>
+                                            <div class="flex-wrap">
+                                                <span class="text-xs text-slate-400">
+                                                    Completed
+                                                </span>
+                                                <form action="{{ route('borrower.borrowings.destroy', $borrowing->id) }}"
+                                                    method="POST"
+                                                    onsubmit="return confirm('Delete this borrowing? (only when the status is pending or returned (confirmed))')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit"
+                                                        class="px-3 py-1 text-xs rounded-md bg-red-100 text-red-700 hover:bg-red-200">
+                                                        Delete
+                                                    </button>
+                                                </form>
+                                            </div>
                                         @endif
 
 
@@ -197,14 +220,6 @@
         }
     </script>
 
-    @if (session('open_create'))
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                document.getElementById('createBorrowCard').hidden = false;
-            });
-        </script>
-    @endif
-
     @if (session('open_edit') && old('borrow_id'))
         <script>
             document.addEventListener('DOMContentLoaded', () => {
@@ -213,6 +228,21 @@
 
                 form.action = `/borrower/borrowings/${id}`;
                 document.getElementById('editBorrowCard').hidden = false;
+            });
+        </script>
+    @endif
+
+    @if (session('error'))
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                alert("{{ session('error') }}");
+            });
+        </script>
+    @endif
+    @if (session('success'))
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                alert("{{ session('success') }}");
             });
         </script>
     @endif

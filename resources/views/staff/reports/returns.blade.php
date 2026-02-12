@@ -45,10 +45,6 @@
         <tbody>
             @foreach ($borrowings as $b)
                 @php
-                    // $due = \Carbon\Carbon::parse($b->due_date);
-                    // $returnDate = \Carbon\Carbon::parse($b->return_date);
-
-                    // $lateDays = $returnDate->greaterThan($due) ? $returnDate->diffInDays($due) : 0;
                     $due = \Carbon\Carbon::parse($b->due_date);
                     $returnDate = \Carbon\Carbon::parse($b->returnData->return_date);
                     $lateDays = $returnDate->greaterThan($due) ? $returnDate->diffInDays($due) : 0;
@@ -60,9 +56,10 @@
                     <td>{{ $b->user->name }}</td>
                     <td>{{ $b->tool->tool_name }}</td>
                     <td>{{ $b->quantity }}</td>
-                    <td>{{ \Carbon\Carbon::parse($b->return_date)->format('d M Y') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($b->returnData->return_date)->format('d M Y') }}</td>
                     <td>{{ $lateDays }}</td>
                     <td>Rp {{ number_format($b->returnData->fine ?? 0) }}</td>
+                    {{-- {{ dd(\Carbon\Carbon::parse($b->returnData->return_date)->format('d M Y')) }} --}}
                 </tr>
             @endforeach
         </tbody>

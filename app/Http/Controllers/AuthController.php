@@ -33,7 +33,7 @@ class AuthController extends Controller
             $request->session()->regenerate();
 
             // Redirect ke halaman yang sebelumnya dituju atau ke "/" jika tidak ada
-            return redirect()->intended('/');
+            return redirect()->intended('/dashboard');
         }
 
         // Jika login gagal, kembali ke halaman sebelumnya dengan error

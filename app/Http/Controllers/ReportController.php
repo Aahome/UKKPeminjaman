@@ -38,6 +38,7 @@ class ReportController extends Controller
         // Mengambil data peminjaman yang sudah dikembalikan
         $borrowings = Borrowing::with(['user', 'tool', 'returnData'])
             ->where('status', 'returned')
+            ->whereHas('returnData')
             ->orderBy('due_date')
             ->get();
 

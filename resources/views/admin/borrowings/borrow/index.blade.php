@@ -125,7 +125,7 @@
                                     </button>
 
                                     <form action="{{ route('admin.borrow.destroy', $borrowing->id) }}" method="POST"
-                                        onsubmit="return confirm('Delete this user?')">
+                                        onsubmit="return confirm('Delete borrow data?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"

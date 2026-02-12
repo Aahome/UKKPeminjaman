@@ -20,12 +20,6 @@ class CategoryController extends Controller
         return view('admin.categories.index', compact('categories'));
     }
 
-    // Menampilkan halaman form tambah kategori
-    public function create()
-    {
-        return view('admin.categories.create');
-    }
-
     /**
      * Menyimpan kategori baru ke database
      */
@@ -42,27 +36,22 @@ class CategoryController extends Controller
             return back()
                 ->withErrors($validator)
                 ->withInput()
+                ->with('error', 'Please check the form. Some fields are invalid.')
                 ->with('open_create', true)
                 ->with('form_context', 'create');
         }
 
         // Membuat kategori baru
-        Category::create([
+        $category = Category::create([
             'category_name' => $request->category_name,
             'description'   => $request->description,
         ]);
 
+        activity_log('added new category , Id:' . $category->id);
+
         return redirect()
             ->route('admin.categories.index')
             ->with('success', 'Category added successfully');
-    }
-
-    /**
-     * Menampilkan halaman edit kategori
-     */
-    public function edit(Category $category)
-    {
-        return view('admin.categories.edit', compact('category'));
     }
 
     /**
@@ -81,6 +70,7 @@ class CategoryController extends Controller
             return back()
                 ->withErrors($validator)
                 ->withInput()
+                ->with('error', 'Please check the form. Some fields are invalid.')
                 ->with('open_edit', true)
                 ->with('form_context', 'edit');
         }
@@ -90,6 +80,8 @@ class CategoryController extends Controller
             'category_name' => $request->category_name,
             'description'   => $request->description,
         ]);
+
+        activity_log('Updated category , Id:' . $category->id);
 
         return redirect()
             ->route('admin.categories.index')
@@ -101,15 +93,10 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        // Cegah penghapusan jika kategori masih digunakan oleh alat
-        if ($category->tools()->exists()) {
-            return back()->withErrors([
-                'error' => 'Category is used by tools and cannot be deleted'
-            ]);
-        }
-
         // Hapus kategori
         $category->delete();
+
+        activity_log('Deleted category , Id:' . $category->id);
 
         return back()->with('success', 'Category deleted');
     }

@@ -265,6 +265,8 @@ class BorrowController extends Controller
 
         $borrowing->tool->decrement('stock', $borrowing->quantity);
 
+        activity_log('borrowing approved, Id:' . $borrowing->id);
+
         return back()->with('success', 'Borrowing approved');
     }
 
@@ -285,6 +287,8 @@ class BorrowController extends Controller
             'status' => 'rejected',
             'rejection_reason' => $request->rejection_reason,
         ]);
+
+        activity_log('borrowing rejected, Id:' . $borrowing->id);
 
         return back()->with('success', 'Borrowing rejected successfully.');
     }

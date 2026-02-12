@@ -13,20 +13,24 @@
             <!-- Nav -->
             <nav class="flex items-center gap-5 text-sm text-nowrap">
                 <a href="/" class="hover:text-blue-600">Home</a>
-                <a href="/dashboard" class="hover:text-blue-600">Dashboard</a>
-                <a href="#" class="hover:text-blue-600">Tentang</a>
+                @auth
+                    @if (Auth::user())
+                        <a href="/dashboard" class="hover:text-blue-600">Dashboard</a>
+                    @endif
+                @endauth
+
             </nav>
 
             {{-- ================= AUTH USER ================= --}}
             @auth
                 <div class="relative">
                     <!-- Profile Button -->
-                    <button onclick="toggleProfileMenu()"
-                        class="flex items-center gap-3 focus:outline-none">
+                    <button onclick="toggleProfileMenu()" class="flex items-center gap-3 focus:outline-none">
                         <span class="text-sm text-slate-600">
                             {{ ucfirst(auth()->user()->name) }}
                         </span>
-                        <div class="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold">
+                        <div
+                            class="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold">
                             {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                         </div>
                     </button>

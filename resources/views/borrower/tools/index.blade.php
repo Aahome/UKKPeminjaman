@@ -183,12 +183,30 @@
     </script>
 
 
-    @if (session('open_create'))
+    @if (session('open_create') && old('tool_id'))
         <script>
             document.addEventListener('DOMContentLoaded', () => {
-                document.getElementById('createUserCard').hidden = false;
+                const id = "{{ old('tool_id') }}";
+                const form = document.getElementById('createForm');
+
+                form.action = `/borrower/borrowings/${id}`;
+                document.getElementById('createBorrowCard').hidden = false;
             });
         </script>
     @endif
 
+    @if (session('error'))
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                alert("{{ session('error') }}");
+            });
+        </script>
+    @endif
+    @if (session('success'))
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                alert("{{ session('success') }}");
+            });
+        </script>
+    @endif
 @endsection

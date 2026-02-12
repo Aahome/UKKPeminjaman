@@ -57,29 +57,3 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-
-# Project Reinitiation
-
-## 1. Install PHP dependencies
-composer install
-
-## 2. If autoload error happens
-composer dump-autoload
-
-## 3. Copy env file
-cp .env.example .env   # Mac/Linux
-copy .env.example .env # Windows
-
-## 4. Generate app key (IMPORTANT - you missed this)
-php artisan key:generate
-
-## 5. Setup database in .env manually
-## Then run migration
-php artisan migrate --seed
-
-## 6. Install frontend dependencies
-npm install
-npm run build
-
-## 7. Run Laravel server
-composer run dev

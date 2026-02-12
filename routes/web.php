@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
+
+//mengimpor kelas dari namespace tertentu
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
@@ -193,10 +195,6 @@ Route::middleware(['auth', 'role:borrower'])
         // Menampilkan tools yang tersedia
         Route::get('/tools', [BorrowerController::class, 'AVIndex'])
             ->name('tools.index');
-
-        // Form create peminjaman berdasarkan tool
-        Route::get('/borrowings/create/{tool}', [BorrowerController::class, 'create'])
-            ->name('borrowings.create');
 
         // Simpan peminjaman
         Route::post('/borrowings/{tool}', [BorrowerController::class, 'store'])

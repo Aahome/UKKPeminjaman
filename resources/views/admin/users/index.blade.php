@@ -137,7 +137,7 @@
                                         </button>
 
                                         <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST"
-                                            onsubmit="return confirm('Delete this user?')">
+                                            onsubmit="return confirm('Delete this user? (all data related to this user will be deleted too)')">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit"
@@ -217,4 +217,18 @@
         </script>
     @endif
 
+    @if (session('error'))
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                alert("{{ session('error') }}");
+            });
+        </script>
+    @endif
+    @if (session('success'))
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                alert("{{ session('success') }}");
+            });
+        </script>
+    @endif
 @endsection

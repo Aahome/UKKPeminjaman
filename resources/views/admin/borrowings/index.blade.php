@@ -119,12 +119,12 @@
         <div class="mb-5">
             <!-- Search Button -->
             <button type="button" id="bButton" onclick="closeReturnTable(); openBorrowTable();"
-                class="px-5 py-2 transition ease-out duration-100 bg-blue-600 border-1 border-blue-600 text-white rounded-lg text-sm hover:bg-blue-700">
+                class="px-5 py-2 transition ease-out duration-100 bg-blue-600 border border-blue-600 text-white rounded-lg text-sm hover:bg-blue-700">
                 Borrow
             </button>
             <!-- Search Button -->
             <button type="button" id="rButton" onclick="closeBorrowTable(); openReturnTable();"
-                class="px-5 py-2 transition ease-out duration-100 bg-white border-1 border-blue-600 text-blue-600 rounded-lg text-sm hover:bg-blue-700 hover:text-white">
+                class="px-5 py-2 transition ease-out duration-100 bg-white border border-blue-600 text-blue-600 rounded-lg text-sm hover:bg-blue-700 hover:text-white">
                 Return
             </button>
         </div>
@@ -222,7 +222,7 @@
             document.getElementById('editReturnForm').action = `/admin/borrowings/return/${id}`;
             document.getElementById('editReturnId').value = id;
 
-            document.getElementById('editReturnDate').value = button.dataset.name;
+            document.getElementById('editReturnDate').value = button.dataset.return_date;
 
             document.getElementById('editReturnCard').hidden = false;
         }
@@ -247,12 +247,12 @@
             document.addEventListener('DOMContentLoaded', () => {
                 const id = "{{ old('borrow_id') }}";
                 const form = document.getElementById('editForm');
-
+                
                 form.action = `/admin/borrowings/borrow/${id}`;
                 document.getElementById('editBorrowCard').hidden = false;
             });
         </script>
-    @endif
+s    @endif
 
     @if (session('open_edit') && old('return_id'))
         <script>
@@ -281,6 +281,7 @@
             }
         });
     </script>
+
     @if (session('error'))
         <script>
             document.addEventListener("DOMContentLoaded", function() {
@@ -295,6 +296,5 @@
             });
         </script>
     @endif
-
 
 @endsection

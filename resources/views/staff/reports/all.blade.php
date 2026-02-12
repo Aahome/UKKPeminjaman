@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <style>
@@ -22,7 +23,8 @@
             border-collapse: collapse;
         }
 
-        th, td {
+        th,
+        td {
             border: 1px solid #333;
             padding: 6px;
             text-align: left;
@@ -42,57 +44,76 @@
         }
     </style>
 </head>
+
 <body>
 
-<h2>Full Borrowing & Return Report</h2>
-<p>Date: {{ $date }}</p>
+    <h2>Full Borrowing & Return Report</h2>
+    <p>Date: {{ $date }}</p>
 
-<table>
-    <thead>
-        <tr>
-            <th>No</th>
-            <th>Borrower</th>
-            <th>Tool</th>
-            <th>Borrow Date</th>
-            <th>Due Date</th>
-            <th>Status</th>
-            <th>Return Date</th>
-            <th>Fine</th>
-        </tr>
-    </thead>
-    <tbody>
-        @forelse ($borrowings as $b)
-        <tr>
-            <td class="center">{{ $loop->iteration }}</td>
-            <td>{{ $b->user->name }}</td>
-            <td>{{ $b->tool->tool_name }}</td>
-            <td class="center">
-                {{ \Carbon\Carbon::parse($b->borrow_date)->format('d M Y') }}
-            </td>
-            <td class="center">
-                {{ \Carbon\Carbon::parse($b->due_date)->format('d M Y') }}
-            </td>
-            <td class="center">
-                {{ ucfirst($b->status) }}
-            </td>
-            <td class="center">
-                {{ optional($b->return)->return_date
-                    ? \Carbon\Carbon::parse($b->return->return_date)->format('d M Y')
-                    : '-' }}
-            </td>
-            <td class="right">
-                Rp {{ number_format(optional($b->return)->fine ?? 0, 0, ',', '.') }}
-            </td>
-        </tr>
-        @empty
-        <tr>
-            <td colspan="8" class="center">
-                No data available
-            </td>
-        </tr>
-        @endforelse
-    </tbody>
-</table>
+    <table>
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Borrower</th>
+                <th>Tool</th>
+                <th>Borrow Date</th>
+                <th>Due Date</th>
+                <th>Status</th>
+                <th>Return Date</th>
+                <th>Fine</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse ($borrowings as $b)
+                <tr>
+                    <td class="center">{{ $loop->iteration }}</td>
+                    <td>{{ $b->user->name }}</td>
+                    <td>{{ $b->tool->tool_name }}</td>
+                    <td class="center">
+                        {{ \Carbon\Carbon::parse($b->borrow_date)->format('d M Y') }}
+                    </td>
+                    <td class="center">
+                        {{ \Carbon\Carbon::parse($b->due_date)->format('d M Y') }}
+                    </td>
+                    <td class="center">
+                        {{ ucfirst($b->status) }}
+
+                        {{-- Rejection reason --}}
+                        @if ($b->status === 'rejected')
+                            <div style="font-size:10px; color:#b91c1c;">
+                                {{ $b->rejection_reason }}
+                            </div>
+
+                            {{-- Return status --}}
+                        @elseif ($b->status === 'returned' && !$b->returnData)
+                            <div style="font-size:10px; color:#b91c1c;">
+                                (Unconfirmed)
+                            </div>
+                        @elseif ($b->status === 'returned' && $b->returnData)
+                            <div style="font-size:10px;">
+                                (Confirmed)
+                            </div>
+                        @endif
+                    </td>
+                    <td class="center">
+                        {{ optional($b->returnData)->return_date
+                            ? \Carbon\Carbon::parse($b->returnData->return_date)->format('d M Y')
+                            : '-' }}
+                    </td>
+                    <td class="right">
+                        Rp {{ number_format(optional($b->returnData)->fine ?? 0, 0, ',', '.') }}
+                    </td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="8" class="center">
+                        No data available
+                    </td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
 
 </body>
+
 </html>

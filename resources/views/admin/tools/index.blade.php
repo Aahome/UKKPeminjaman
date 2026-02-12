@@ -173,6 +173,10 @@
                     </tbody>
                 </table>
             </div>
+            <!-- Pagination -->
+            <div class="px-6 py-4 border-t border-slate-200">
+                {{ $tools->links() }}
+            </div>
         </section>
     </div>
 
@@ -232,4 +236,18 @@
         </script>
     @endif
 
+    @if (session('error'))
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                alert("{{ session('error') }}");
+            });
+        </script>
+    @endif
+    @if (session('success'))
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                alert("{{ session('success') }}");
+            });
+        </script>
+    @endif
 @endsection

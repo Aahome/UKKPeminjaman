@@ -1,5 +1,5 @@
 <!-- Return Table -->
-<div id="returnTable">
+<div id="returnTable" hidden>
 
     <section class="bg-white rounded-xl shadow-sm">
 
@@ -59,14 +59,14 @@
                                 <div class="flex justify-center gap-2">
                                     <button type="button" 
                                         data-id="{{ $return->id }}"
-                                        data-borrow_date="{{ $return->return_date }}"
+                                        data-return_date="{{ $return->return_date }}"
                                         onclick="openReturnEditCard(this)"
                                         class="px-3 py-1 text-xs rounded-md bg-amber-100 text-amber-700 hover:bg-amber-200">
                                         Edit
                                     </button>
 
-                                    <form action="{{ route('admin.return.destroy', $borrowing->id) }}" method="POST"
-                                        onsubmit="return confirm('Delete this user?')">
+                                    <form action="{{ route('admin.return.destroy', $return->id) }}" method="POST"
+                                        onsubmit="return confirm('Delete this return data?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"
