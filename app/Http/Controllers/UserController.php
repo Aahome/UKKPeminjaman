@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Role;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -51,10 +52,11 @@ class UserController extends Controller
 
         // Menyimpan user baru dengan password yang telah di-hash
         $user = User::create([
-            'name'     => $request->name,
-            'email'    => $request->email,
-            'password' => Hash::make($request->password),
-            'role_id'  => $request->role_id,
+            'name'       => $request->name,
+            'email'      => $request->email,
+            'password'   => Hash::make($request->password),
+            'role_id'    => $request->role_id,
+            'created_by' => Auth::id(),
         ]);
 
         return redirect()
@@ -96,6 +98,7 @@ class UserController extends Controller
             return back()->with('error', 'Admin role cannot be changed.');
         }
 
+        $validated['modified_by'] = Auth::id();
 
         // Update data user
         $user->update($validated);

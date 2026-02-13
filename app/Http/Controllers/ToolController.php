@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Tool;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class ToolController extends Controller
@@ -58,7 +59,7 @@ class ToolController extends Controller
             'category_id',
             'condition',
             'stock'
-        ]));
+        ]) + ['created_by' => Auth::id()]);
 
         return redirect()
             ->route('admin.tools.index')
@@ -94,7 +95,7 @@ class ToolController extends Controller
             'category_id',
             'condition',
             'stock'
-        ]));
+        ]) + ['modified_by' => Auth::id()]);
 
         return redirect()
             ->route('admin.tools.index')

@@ -36,11 +36,11 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // Register observers
-        Role::observe(RoleObserver::class);
-        User::observe(UserObserver::class);
-        Category::observe(CategoryObserver::class);
-        Tool::observe(ToolObserver::class);
-        Borrowing::observe(BorrowingObserver::class);
-        ReturnModel::observe(ReturnObserver::class);
+        // Role::observe(RoleObserver::class);
+        // User::observe(UserObserver::class);
+        // Category::observe(CategoryObserver::class);
+        // Tool::observe(ToolObserver::class);
+        // Borrowing::observe(BorrowingObserver::class);
+        // ReturnModel::observe(ReturnObserver::class);
     }
 }

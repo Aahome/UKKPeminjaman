@@ -13,6 +13,8 @@ class ReturnModel extends Model
         'borrowing_id',
         'return_date',
         'fine',
+        'created_by',
+        'modified_by',
     ];
 
     // Relasi many-to-one: data pengembalian terkait dengan satu peminjaman

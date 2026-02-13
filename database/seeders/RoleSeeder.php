@@ -11,9 +11,9 @@ class RoleSeeder extends Seeder
     {
         // Mengisi data awal role (admin, staff, borrower) ke tabel roles
         Role::insert([
-            ['role_name' => 'admin'],
-            ['role_name' => 'staff'],
-            ['role_name' => 'borrower'],
+            ['role_name' => 'admin', 'created_by' => null, 'modified_by' => null, 'created_at' => now(), 'updated_at' => now()],
+            ['role_name' => 'staff', 'created_by' => null, 'modified_by' => null, 'created_at' => now(), 'updated_at' => now()],
+            ['role_name' => 'borrower', 'created_by' => null, 'modified_by' => null, 'created_at' => now(), 'updated_at' => now()],
         ]);
     }
 }

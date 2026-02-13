@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class BorrowController extends Controller
 {
@@ -84,6 +85,7 @@ class BorrowController extends Controller
             'due_date'         => $request->due_date,
             'status'           => $request->status,
             'rejection_reason' => $request->status === 'rejected' ? $request->rejection_reason : null,
+            'created_by'       => Auth::id(),
         ]);
 
         // Jika status returned langsung, buat data return dan hitung denda
@@ -91,20 +93,15 @@ class BorrowController extends Controller
             $today    = Carbon::today();
             $dueDate  = Carbon::parse($borrowing->due_date);
 
-            // $lateDays = $today->gt($dueDate)
-            //     ? $dueDate->diffInDays($today)
-            //     : 0;
-
-            // $fine = $lateDays * 5000 * $request->quantity;
-
             $fine = DB::selectOne("
-            SELECT count_fine(?, ?, ?) AS total
+            SELECT fine_count(?, ?, ?) AS total
             ", [$dueDate, $today, $request->quantity])->total;
 
             ReturnModel::create([
                 'borrowing_id' => $borrowing->id,
                 'return_date'  => $today,
                 'fine'         => $fine,
+                'created_by'   => Auth::id(),
             ]);
         }
 
@@ -206,6 +203,7 @@ class BorrowController extends Controller
             'rejection_reason' => $newStatus === 'rejected'
                 ? $request->rejection_reason
                 : null,
+            'modified_by'      => Auth::id(),
         ]);
 
         // Jika masuk ke status returned, buat return data jika belum ada
@@ -215,6 +213,7 @@ class BorrowController extends Controller
                     'borrowing_id' => $borrow->id,
                     'return_date'  => now(),
                     'fine'         => $request->fine ?? 0,
+                    'created_by'   => Auth::id(),
                 ]);
             }
         }
@@ -246,45 +245,30 @@ class BorrowController extends Controller
     // Menyetujui peminjaman dan mengurangi stok
     public function approve(Borrowing $borrowing)
     {
-        if ($borrowing->status !== 'pending') {
-            return back()->with('error', 'Only pending borrowings can be approved.');
-        }
-
-
-        if ($borrowing->tool->stock < $borrowing->quantity) {
+        try {
+            DB::select('CALL approve_borrowing(?)', [$borrowing->id]);
+            return back()->with('success', 'Borrowing approved');
+        } catch (\Exception $e) {
             return back()
-                ->withErrors(['stock' => 'Tool stock not available'])
-                ->with('error', 'Tool stock not available.');
+                ->withErrors(['error' => $e->getMessage()])
+                ->with('error', $e->getMessage());
         }
-
-
-        $borrowing->update([
-            'status' => 'approved',
-        ]);
-
-        $borrowing->tool->decrement('stock', $borrowing->quantity);
-
-        return back()->with('success', 'Borrowing approved');
     }
 
     // Menolak peminjaman dengan alasan
     public function reject(Request $request, Borrowing $borrowing)
     {
-        if ($borrowing->status !== 'pending') {
-            return back()
-                ->withErrors(['status' => 'Only pending borrowings can be rejected.'])
-                ->with('error', 'Only pending borrowings can be rejected.');
-        }
-
         $request->validate([
             'rejection_reason' => 'nullable|string|max:255',
         ]);
 
-        $borrowing->update([
-            'status' => 'rejected',
-            'rejection_reason' => $request->rejection_reason,
-        ]);
-
-        return back()->with('success', 'Borrowing rejected successfully.');
+        try {
+            DB::select('CALL reject_borrowing(?, ?)', [$borrowing->id, $request->rejection_reason]);
+            return back()->with('success', 'Borrowing rejected successfully.');
+        } catch (\Exception $e) {
+            return back()
+                ->withErrors(['status' => $e->getMessage()])
+                ->with('error', $e->getMessage());
+        }
     }
 }

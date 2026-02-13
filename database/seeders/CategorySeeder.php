@@ -17,36 +17,42 @@ class CategorySeeder extends Seeder
         Category::create([
             'category_name'  => 'Electronics',
             'description'    => '-blblbl',
+            'created_by'     => 1,
         ]);
 
         // Menambahkan kategori Hand Tool
         Category::create([
             'category_name'  => 'School Furniture',
             'description'    => '-blblbl',
+            'created_by'     => 1,
         ]);
 
         // Menambahkan kategori Hand Tool
         Category::create([
             'category_name'  => 'Laboratory Equipment',
             'description'    => '-blblbl',
+            'created_by'     => 1,
         ]);
 
         // Menambahkan kategori Hand Tool
         Category::create([
             'category_name'  => 'Props',
             'description'    => '-blblbl',
+            'created_by'     => 1,
         ]);
 
         // Menambahkan kategori Hand Tool
         Category::create([
             'category_name'  => 'Sports Equipment',
             'description'    => '-blblbl',
+            'created_by'     => 1,
         ]);
 
         // Menambahkan kategori Hand Tool
         Category::create([
             'category_name'  => 'Books',
             'description'    => '-blblbl',
+            'created_by'     => 1,
         ]);
     }
 }

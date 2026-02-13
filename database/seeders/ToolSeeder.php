@@ -21,6 +21,7 @@ class ToolSeeder extends Seeder
             'category_id' => 1,
             'stock'       => 67,
             'condition'   => 'good',
+            'created_by'  => 1,
         ]);
     }
 }

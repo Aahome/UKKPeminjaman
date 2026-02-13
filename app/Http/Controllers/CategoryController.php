@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class CategoryController extends Controller
@@ -45,6 +46,7 @@ class CategoryController extends Controller
         $category = Category::create([
             'category_name' => $request->category_name,
             'description'   => $request->description,
+            'created_by'    => Auth::id(),
         ]);
 
         return redirect()
@@ -77,6 +79,7 @@ class CategoryController extends Controller
         $category->update([
             'category_name' => $request->category_name,
             'description'   => $request->description,
+            'modified_by'   => Auth::id(),
         ]);
 
         return redirect()

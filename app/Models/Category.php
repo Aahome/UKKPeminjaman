@@ -10,6 +10,8 @@ class Category extends Model
     protected $fillable = [
         'category_name',
         'description',
+        'created_by',
+        'modified_by',
     ];
 
     // Relasi one-to-many: satu kategori memiliki banyak alat

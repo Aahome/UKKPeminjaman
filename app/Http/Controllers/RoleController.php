@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Role;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class RoleController extends Controller
@@ -37,6 +38,7 @@ class RoleController extends Controller
         // Membuat role baru
         $role = Role::create([
             'role_name' => $request->role_name,
+            'created_by' => Auth::id(),
         ]);
 
         return redirect()
@@ -65,6 +67,7 @@ class RoleController extends Controller
         // Update nama role
         $role->update([
             'role_name' => $request->role_name,
+            'modified_by' => Auth::id(),
         ]);
 
         return redirect()

@@ -45,7 +45,7 @@
                                 $fine = $borrowing->returnData->fine;
                             } else {
                                 $fine = DB::selectOne("
-                                SELECT count_fine(?, ?, ?) AS total
+                                SELECT fine_count(?, ?, ?) AS total
                                 ", [$due, $today, $borrowing->quantity])->total;
                             }
                         @endphp

@@ -13,6 +13,8 @@ class Tool extends Model
         'category_id',
         'stock',
         'condition',
+        'created_by',
+        'modified_by',
     ];
 
     // Relasi many-to-one: alat termasuk dalam satu kategori

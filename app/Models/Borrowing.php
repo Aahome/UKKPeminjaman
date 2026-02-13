@@ -17,6 +17,8 @@ class Borrowing extends Model
         'due_date',
         'status',
         'rejection_reason',
+        'created_by',
+        'modified_by',
     ];
 
     // Relasi many-to-one: peminjaman dilakukan oleh satu user

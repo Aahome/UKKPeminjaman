@@ -8,7 +8,7 @@ use App\models\User;
 class Role extends Model
 {
     // Menentukan kolom yang bisa diisi
-    protected $fillable = ['role_name'];
+    protected $fillable = ['role_name', 'created_by', 'modified_by'];
     
 // Relasi one-to-many: satu data memiliki banyak User
     public function users() {

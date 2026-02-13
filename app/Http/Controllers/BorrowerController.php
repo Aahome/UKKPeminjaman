@@ -98,6 +98,7 @@ class BorrowerController extends Controller
             'borrow_date' => Carbon::today(),
             'due_date'    => $request->due_date,
             'status'      => 'pending',
+            'created_by'  => Auth::id(),
         ]);
 
         return redirect()
@@ -147,6 +148,7 @@ class BorrowerController extends Controller
         $borrowing->update([
             'quantity' => $newQty,
             'due_date' => $request->due_date,
+            'modified_by' => Auth::id(),
         ]);
 
         return redirect()
@@ -168,6 +170,7 @@ class BorrowerController extends Controller
 
         $borrowing->update([
             'status' => 'returned',
+            'modified_by' => Auth::id(),
         ]);
 
         return back()->with('success', 'Tool returned successfully. Waiting for staff confirmation.');
@@ -187,11 +190,6 @@ class BorrowerController extends Controller
             ]);
         }
 
-        // if (!in_array($borrowing->status, ['pending', 'approved']) && ) {
-        //     return back()->withErrors([
-        //         'error' => 'You can only delete borrowing after the tool is returned or pending.'
-        //     ]);
-        // }
         $borrowing->delete();
 
         return back()->with('success', 'Borrowing deleted successfully.');

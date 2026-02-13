@@ -15,7 +15,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // seeder digunakan untuk menambah data awal ke database agar tidak perlu menambahkan secara manual terlebih dahulu
         $this->call([
             RoleSeeder::class,
             UserSeeder::class,

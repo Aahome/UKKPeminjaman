@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Borrowing;
 use App\Models\ReturnModel;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -30,28 +31,16 @@ class ReturnController extends Controller
      */
     public function store(Borrowing $borrowing)
     {
-        $today   = Carbon::today(); // Tanggal hari ini
-        $dueDate = Carbon::parse($borrowing->due_date); // Tanggal jatuh tempo
-
-
-        // Menghitung total denda (Rp5000 × hari terlambat × jumlah alat)
-        $fine = DB::selectOne("
-        SELECT count_fine(?, ?, ?) AS total
-        ", [$dueDate, $today, $borrowing->quantity])->total;
-
-        // Menyimpan data pengembalian
-        ReturnModel::create([
-            'borrowing_id' => $borrowing->id,
-            'return_date'  => $today,
-            'fine'         => $fine,
-        ]);
-
-        // Mengembalikan stok alat
-        $borrowing->tool->increment('stock', $borrowing->quantity);
-
-        return back()
-            ->with('view', 'return')
-            ->with('success', 'Tool returned successfully');
+        try {
+            DB::select('CALL store_return(?)', [$borrowing->id]);
+            return back()
+                ->with('view', 'return')
+                ->with('success', 'Tool returned successfully');
+        } catch (\Exception $e) {
+            return back()
+                ->withErrors(['error' => $e->getMessage()])
+                ->with('error', $e->getMessage());
+        }
     }
 
     /**
@@ -83,7 +72,7 @@ class ReturnController extends Controller
         // Menghitung ulang denda berdasarkan tanggal baru
         if ($returnDate->greaterThan($dueDate)) {
             $fine = DB::selectOne("
-            SELECT count_fine(?, ?, ?) AS total
+            SELECT fine_count(?, ?, ?) AS total
             ", [$dueDate, $returnDate, $return->borrowing->quantity])->total;
         } else {
             $fine = 0;
@@ -93,6 +82,7 @@ class ReturnController extends Controller
         $return->update([
             'return_date' => $returnDate,
             'fine'        => $fine,
+            'modified_by' => Auth::id(),
         ]);
 
         return redirect()
@@ -112,6 +102,7 @@ class ReturnController extends Controller
         // Mengubah status peminjaman kembali menjadi pending
         $borrowing->update([
             'status' => 'pending',
+            'modified_by' => Auth::id(),
         ]);
 
         // Menghapus data pengembalian

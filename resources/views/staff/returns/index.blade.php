@@ -64,16 +64,25 @@
                                 $today = \Carbon\Carbon::today();
                                 $due = \Carbon\Carbon::parse($borrowing->due_date);
 
+                                $lateDays = 0;
+                                $fine = 0;
+
                                 if ($borrowing->returnData) {
-                                    // Return already confirmed → use stored fine
-                                    $returnOn = \Carbon\Carbon::parse($borrowing->returnData->return_date); // <-- convert to Carbon
+                                    // Sudah dikonfirmasi → pakai tanggal return
+                                    $returnOn = \Carbon\Carbon::parse($borrowing->returnData->return_date);
+
                                     $lateDays = $returnOn->greaterThan($due) ? $returnOn->diffInDays($due) : 0;
+
                                     $fine = $borrowing->returnData->fine;
                                 } else {
-                                    // Not returned yet → calculate live
-                                    $fine = DB::selectOne("
-                                    SELECT count_fine(?, ?, ?) AS total
-                                    ", [$due, $today, $borrowing->quantity])->total;
+                                    // Belum dikembalikan → hitung berdasarkan hari ini
+                                    $lateDays = $today->greaterThan($due) ? $today->diffInDays($due) : 0;
+
+                                    $fine = DB::selectOne('SELECT fine_count(?, ?, ?) AS total', [
+                                        $due,
+                                        $today,
+                                        $borrowing->quantity,
+                                    ])->total;
                                 }
                             @endphp
 
@@ -115,7 +124,7 @@
                                 <td class="px-6 py-4 text-red-600 font-semibold">
                                     Rp {{ number_format($fine, 0, ',', '.') }}
                                 </td>
-                                
+
                                 <td class="px-6 py-4">
                                     @if ($borrowing->returnData)
                                         {{ \Carbon\Carbon::parse($borrowing->returnData->created_at)->timezone('Asia/Jakarta')->format('d M Y H:i') }}
