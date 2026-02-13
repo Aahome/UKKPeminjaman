@@ -36,7 +36,8 @@ return new class extends Migration
         FOR EACH ROW
         BEGIN
             INSERT INTO activity_logs (user_id, activity, new_data, old_data, created_at, updated_at)
-            VALUES (NEW.created_by, CONCAT('created user Id: ', NEW.id, ' (', NEW.email, ')'), JSON_OBJECT('id', NEW.id, 'name', NEW.name, 'email', NEW.email), NULL, NOW(), NOW());
+            VALUES (NEW.created_by, CONCAT('created user Id: ', NEW.id, ' (', NEW.email, ')'), 
+            JSON_OBJECT('id', NEW.id, 'name', NEW.name, 'email', NEW.email), NULL, NOW(), NOW());
         END
         SQL);
 
