@@ -3,9 +3,12 @@
     <div class="max-w-7xl mx-auto px-5 py-4 flex items-center justify-between">
 
         <!-- Logo -->
-        <h1 class="text-lg font-bold text-slate-800">
-            UKK<span class="text-blue-600">Peminjaman</span>
-        </h1>
+        <div class="flex items-center gap-3">
+            <img src="{{ asset('images/logo-image.png') }}" alt="UKK Peminjaman Logo" class="h-10 w-10 object-contain">
+            <h1 class="text-lg font-bold text-slate-800">
+                UKK<span class="text-blue-600">Peminjaman</span>
+            </h1>
+        </div>
 
         <!-- Right group -->
         <div class="flex items-center gap-6">

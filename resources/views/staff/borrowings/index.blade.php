@@ -49,11 +49,11 @@
                             <th class="px-6 py-3 text-left">No</th>
                             <th class="px-6 py-3 text-left">Borrower</th>
                             <th class="px-6 py-3 text-left">Tool</th>
+                            <th class="px-6 py-3 text-left">Quantity</th>
                             <th class="px-6 py-3 text-left">Borrow Date</th>
                             <th class="px-6 py-3 text-left">Due Date</th>
                             <th class="px-6 py-3 text-center">Status</th>
                             <th class="px-6 py-3 text-center">Created At</th>
-                            <th class="px-6 py-3 text-center">Updated At</th>
                             <th class="px-6 py-3 text-center">Action</th>
                         </tr>
                     </thead>
@@ -71,6 +71,10 @@
 
                                 <td class="px-6 py-4">
                                     {{ $borrowing->tool->tool_name }}
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    {{ $borrowing->quantity }}
                                 </td>
 
                                 <td class="px-6 py-4">
@@ -105,12 +109,8 @@
                                     @endif
                                 </td>
 
-                                <td class="px-6 py-4">
+                                <td class="px-6 py-4 text-center">
                                     {{ $borrowing->created_at }}
-                                </td>
-
-                                <td class="px-6 py-4">
-                                    {{ $borrowing->updated_at }}
                                 </td>
 
                                 <!-- Action -->

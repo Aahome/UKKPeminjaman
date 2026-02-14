@@ -29,15 +29,25 @@ class BorrowController extends Controller
         $validator = Validator::make($request->all(), [
             'user_id'           => 'required|exists:users,id',
             'tool_id'           => 'required|exists:tools,id',
-            'quantity'          => 'required|integer',
+            'quantity'          => 'required|integer|min:1',
             'borrow_date'       => 'nullable|date',
             'due_date'          => 'required|date|after_or_equal:borrow_date',
             'status'            => 'required|in:pending,approved,rejected,returned',
             'rejection_reason'  => 'nullable|string|max:255',
         ]);
 
+
         // Validasi tambahan untuk rejection_reason
         $validator->after(function ($validator) use ($request) {
+            $tool = Tool::find($request->tool_id);
+
+            if ($tool && $request->quantity > $tool->stock && $request->status === 'approved') {
+                $validator->errors()->add(
+                    'quantity',
+                    'Quantity exceeds available stock.'
+                );
+            }
+
             if ($request->status === 'rejected' && empty($request->rejection_reason)) {
                 $validator->errors()->add(
                     'rejection_reason',
@@ -131,6 +141,16 @@ class BorrowController extends Controller
 
         // Validasi tambahan untuk rejection_reason
         $validator->after(function ($validator) use ($request) {
+
+            $tool = Tool::find($request->tool_id);
+
+            if ($tool && $request->quantity > $tool->stock && $request->status === 'approved') {
+                $validator->errors()->add(
+                    'quantity',
+                    'Quantity exceeds available stock.'
+                );
+            }
+
             if ($request->status === 'rejected' && empty($request->rejection_reason)) {
                 $validator->errors()->add(
                     'rejection_reason',

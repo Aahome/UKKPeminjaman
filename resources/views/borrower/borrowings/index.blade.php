@@ -73,7 +73,6 @@
                             <th class="px-6 py-3 text-left">Fine</th>
                             <th class="px-6 py-3 text-left">Status</th>
                             <th class="px-6 py-3 text-center">Created At</th>
-                            <th class="px-6 py-3 text-center">Updated At</th>
                             <th class="px-6 py-3 text-center w-48">Action</th>
                         </tr>
                     </thead>
@@ -126,10 +125,6 @@
                                     {{ $borrowing->created_at }}
                                 </td>
 
-                                <td class="px-6 py-4">
-                                    {{ $borrowing->updated_at }}
-                                </td>
-
                                 <!-- Actions -->
                                 <td class="px-6 py-4 text-center">
                                     <div class="flex justify-center gap-2">
@@ -144,6 +139,17 @@
                                                 Edit
                                             </button>
 
+                                            <form action="{{ route('borrower.borrowings.destroy', $borrowing->id) }}"
+                                                method="POST"
+                                                onsubmit="return confirm('Delete this borrowing? (only when the status is pending or returned (confirmed))')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                    class="px-3 py-1 text-xs rounded-md bg-red-100 text-red-700 hover:bg-red-200">
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        @elseif ($borrowing->status === 'rejected')
                                             <form action="{{ route('borrower.borrowings.destroy', $borrowing->id) }}"
                                                 method="POST"
                                                 onsubmit="return confirm('Delete this borrowing? (only when the status is pending or returned (confirmed))')">

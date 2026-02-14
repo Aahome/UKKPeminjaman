@@ -110,6 +110,13 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
+        // Check if user has approved borrowings and increment tool stock
+        $approvedBorrowings = $user->borrowings()->where('status', 'approved')->get();
+        
+        foreach ($approvedBorrowings as $borrowing) {
+            $borrowing->tool->increment('stock', $borrowing->quantity);
+        }
+
         // Menghapus data user berdasarkan model binding
         $user->delete();
 

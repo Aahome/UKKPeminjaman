@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <!-- Menampilkan judul halaman yang dikirim dari masing-masing view -->
     <title>@yield('title')</title>
+    <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
 
     <!-- Memuat file CSS dan JavaScript menggunakan Vite (Laravel asset bundler) -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Admin Dashboard')
+@section('title', 'Staff | Dashboard')
 
 @section('dashboard-content')
     <main class="flex-1 p-8">

@@ -70,6 +70,17 @@ class BorrowerController extends Controller
             'due_date' => 'required|date|after_or_equal:today',
         ]);
 
+        $validator->after(function ($validator) use ($request) {
+            $tool = Tool::find($request->tool_id);
+
+            if ($tool && $request->quantity > $tool->stock) {
+                $validator->errors()->add(
+                    'quantity',
+                    'Quantity exceeds available stock.'
+                );
+            }
+        });
+
         // Jika validasi gagal
         if ($validator->fails()) {
             return back()
@@ -78,7 +89,6 @@ class BorrowerController extends Controller
                 ->with('error', 'Please check the form. Some fields are invalid.')
                 ->with('open_create', true)
                 ->with('form_context', 'create');
-
         }
 
         // Cek ketersediaan stok
@@ -184,7 +194,7 @@ class BorrowerController extends Controller
         }
 
         // Hanya bisa dihapus jika pending atau telah dikembalikan
-        if (!in_array($borrowing->status, ['pending', 'returned']) || ($borrowing->status === 'returned' && !$borrowing->returnData)) {
+        if (!in_array($borrowing->status, ['pending', 'returned','rejected']) || ($borrowing->status === 'returned' && !$borrowing->returnData)) {
             return back()->withErrors([
                 'error' => 'Borrowing cannot be deleted if the status is not pending or returned (comfirmed).'
             ]);

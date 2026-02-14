@@ -8,7 +8,12 @@
 <main class="min-h-screen flex items-center justify-center bg-slate-100 text-slate-700 px-4">
 
     <!-- Card login -->
-    <div class="w-full max-w-md bg-white rounded-2xl shadow-md p-8">
+    <div class="w-full max-w-lg bg-white rounded-2xl shadow-md p-8">
+
+        <!-- Logo -->
+        <div class="flex justify-center mb-2">
+            <img src="{{ asset('images/logo-image.png') }}" alt="UKK Peminjaman Logo" class="h-24 w-24 object-contain">
+        </div>
 
         <!-- App title -->
         <h1 class="text-2xl font-bold text-slate-800 text-center">
@@ -16,13 +21,13 @@
         </h1>
 
         <!-- Subtitle -->
-        <p class="text-sm text-slate-500 text-center mt-2">
+        <p class="text-sm text-slate-500 text-center mt-1">
             Login to continue
         </p>
 
 
         <!-- Login form -->
-        <form method="POST" action="{{ route('login') }}" class="mt-6 space-y-4">
+        <form method="POST" action="{{ route('login') }}" class="mt-3 space-y-4">
             @csrf <!-- CSRF protection -->
 
             <!-- Email input -->

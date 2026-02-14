@@ -10,11 +10,15 @@
         {{-- Menampilkan sidebar berdasarkan role --}}
         @if ($role === 'admin')
             {{-- Sidebar Admin --}}
-            <div class="p-6">
-                <h1 class="text-lg font-bold text-slate-800 tracking-wide">
-                    <a href="/">UKK<span class="text-blue-600">Peminjaman</span></a>
-                </h1>
-                <p class="text-xs text-slate-500 mt-1">Admin Dashboard</p>
+            <div class="p-6 flex items-center">
+                <img src="{{ asset('images/logo-image.png') }}" alt="UKK Peminjaman Logo"
+                    class="h-10 w-10 object-contain">
+                <div class="p-2 gap-3">
+                    <h1 class="text-lg font-bold text-slate-800">
+                        UKK<span class="text-blue-600">Peminjaman</span>
+                    </h1>
+                    <p class="text-xs text-slate-500">Admin Dashboard</p>
+                </div>
             </div>
 
             <nav class="px-4 space-y-1">
