@@ -7,6 +7,10 @@
 <!-- Main container -->
 <main class="min-h-screen flex items-center justify-center bg-slate-100 text-slate-700 px-4">
 
+     <!-- Back link top-left -->
+     <a href="#" onclick="history.back(); return false;" aria-label="Go back"
+         class="fixed top-6 left-6 text-slate-500 text-base px-2 py-1 ho hover:bg-slate-200 hover:rounded-md transition-colors duration-150 z-50">&lt; Back</a>
+
     <!-- Card login -->
     <div class="w-full max-w-lg bg-white rounded-2xl shadow-md p-8">
 

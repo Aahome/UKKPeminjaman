@@ -136,16 +136,17 @@
                                             class="px-3 py-1 text-xs rounded-md bg-amber-100 text-amber-700 hover:bg-amber-200">
                                             Edit
                                         </button>
-
-                                        <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST"
-                                            onsubmit="return confirm('Delete this user? (all data related to this user will be deleted too)')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit"
-                                                class="px-3 py-1 text-xs rounded-md bg-red-100 text-red-700 hover:bg-red-200">
-                                                Delete
-                                            </button>
-                                        </form>
+                                        @if ($user->role->role_name !== 'admin')
+                                            <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST"
+                                                onsubmit="return confirm('Delete this user? (all data related to this user will be deleted too)')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                    class="px-3 py-1 text-xs rounded-md bg-red-100 text-red-700 hover:bg-red-200">
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>

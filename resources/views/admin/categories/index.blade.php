@@ -70,6 +70,7 @@
                         <tr>
                             <th class="px-6 py-3 text-left w-12">No</th>
                             <th class="px-6 py-3 text-left">Category Name</th>
+                            <th class="px-6 py-3 text-left">Description</th>
                             <th class="px-6 py-3 text-center w-40">Action</th>
                         </tr>
                     </thead>
@@ -83,6 +84,10 @@
 
                                 <td class="px-6 py-4 font-medium text-slate-800">
                                     {{ $category->category_name }}
+                                </td>
+
+                                <td class="px-6 py-4 font-medium text-slate-800">
+                                    {{ $category->description }}
                                 </td>
 
                                 <td class="px-6 py-4 text-center">

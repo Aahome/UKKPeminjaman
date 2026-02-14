@@ -62,3 +62,24 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 https://chatgpt.com/share/698e66e6-d52c-8005-8829-207a81dcd84b
 
 https://chatgpt.com/share/6988985d-ab00-8005-959c-d9a6219b7c0d
+
+TAMBAHAN:
+
+User:
+Nama
+Kelas
+Email
+
+Tool:
+Price
+
+Denda 1%/hari dari total harga dipinjam, ex: {
+Borrow:
+Pen-5 -price 3
+
+quantity * price
+
+fine = total + 1% / day
+
+}
+jumlah akun stock di peminjam
