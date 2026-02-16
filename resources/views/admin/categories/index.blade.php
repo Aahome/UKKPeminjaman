@@ -71,6 +71,7 @@
                             <th class="px-6 py-3 text-left w-12">No</th>
                             <th class="px-6 py-3 text-left">Category Name</th>
                             <th class="px-6 py-3 text-left">Description</th>
+                            <th class="px-6 py-3 text-left">Location</th>
                             <th class="px-6 py-3 text-center w-40">Action</th>
                         </tr>
                     </thead>
@@ -90,11 +91,16 @@
                                     {{ $category->description }}
                                 </td>
 
+                                <td class="px-6 py-4 font-medium text-slate-800">
+                                    {{ $category->location }}
+                                </td>
+
                                 <td class="px-6 py-4 text-center">
                                     <div class="flex justify-center gap-2">
                                         <button type="button" data-id="{{ $category->id }}"
                                             data-name="{{ $category->category_name }}"
-                                            data-description="{{ $category->description }}" onclick="openEditCard(this)"
+                                            data-description="{{ $category->description }}"
+                                            data-location="{{ $category->location }}" onclick="openEditCard(this)"
                                             class="px-3 py-1 text-xs rounded-md bg-amber-100 text-amber-700 hover:bg-amber-200">
                                             Edit
                                         </button>
@@ -146,12 +152,14 @@
             const id = button.dataset.id;
             const name = button.dataset.name;
             const description = button.dataset.description;
+            const location = button.dataset.location;
 
             document.getElementById('editForm').action = `/admin/categories/${id}`;
             document.getElementById('editCategoryId').value = id;
 
             document.getElementById('editCategoryName').value = name;
             document.getElementById('editCategoryDescription').value = description;
+            document.getElementById('editCategoryLocation').value = location;
 
             document.getElementById('editCategoryCard').hidden = false;
         }

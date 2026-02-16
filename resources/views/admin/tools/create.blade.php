@@ -46,7 +46,22 @@
                 @enderror
             </div>
 
-            <!-- Condition -->
+            <!-- Price -->
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1">
+                    Price
+                </label>
+                <input type="number"
+                    name="price"
+                    step="0.01"
+                    min="0"
+                    value="{{ session('form_context') === 'create' ? old('price') : '' }}"
+                    placeholder="Enter price"
+                    class="w-full px-4 py-2 border rounded-lg text-sm">
+                @error('price')
+                <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+                @enderror
+            </div>
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">
                     Condition

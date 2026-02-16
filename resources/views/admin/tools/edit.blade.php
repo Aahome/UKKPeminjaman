@@ -54,7 +54,23 @@
                 @enderror
             </div>
 
-            <!-- Condition -->
+            <!-- Price -->
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1">
+                    Price
+                </label>
+                <input type="number"
+                    id="editToolPrice"
+                    name="price"
+                    step="0.01"
+                    min="0"
+                    value="{{ old('price') }}"
+                    placeholder="Enter price"
+                    class="w-full px-4 py-2 border rounded-lg text-sm">
+                @error('price')
+                <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
+                @enderror
+            </div>
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">
                     Condition

@@ -8,8 +8,8 @@
 <main class="min-h-screen flex items-center justify-center bg-slate-100 text-slate-700 px-4">
 
      <!-- Back link top-left -->
-     <a href="#" onclick="history.back(); return false;" aria-label="Go back"
-         class="fixed top-6 left-6 text-slate-500 text-base px-2 py-1 ho hover:bg-slate-200 hover:rounded-md transition-colors duration-150 z-50">&lt; Back</a>
+     <a href="{{ url('/') }}" aria-label="Go home"
+         class="fixed top-6 left-6 text-slate-500 text-base px-2 py-1 hover:bg-slate-200 hover:rounded-md transition-colors duration-150 z-50">&lt; Back</a>
 
     <!-- Card login -->
     <div class="w-full max-w-lg bg-white rounded-2xl shadow-md p-8">
@@ -34,12 +34,12 @@
         <form method="POST" action="{{ route('login') }}" class="mt-3 space-y-4">
             @csrf <!-- CSRF protection -->
 
-            <!-- Email input -->
+            <!-- Username or Email input -->
             <div>
-                <label class="text-sm text-slate-600">Name</label>
+                <label class="text-sm text-slate-600">Username or Email</label>
                 <input type="text"
-                    name="name"
-                    value="{{ old('name') }}"
+                    name="username_or_email"
+                    value="{{ old('username_or_email') }}"
                     class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring focus:ring-blue-200 focus:border-blue-500 outline-none"
                     required>
             </div>
@@ -54,13 +54,12 @@
             </div>
 
             <!-- Error message (login failed) -->
-            @error('name')
+            @error('username_or_email')
             <div id="login-error" class="rounded-lg bg-red-500 mt-2 p-2 items-center text-center justify-center">
-                <p class="text-sm text-white text-center ">
-                    {{ $message }}
-                </p>
-            </div>
-
+                        <p class="text-sm text-white text-center ">
+                            {{ $message }}
+                        </p>
+                    </div>
 
             <script>
                 setTimeout(() => {

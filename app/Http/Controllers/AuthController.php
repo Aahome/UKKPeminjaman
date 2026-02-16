@@ -21,11 +21,23 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        // Validasi input email dan password dari form login
-        $credentials = $request->validate([
-            'name'    => 'required',
-            'password' => 'required'
+        // Validasi input username/email dan password dari form login
+        $request->validate([
+            'username_or_email' => 'required',
+            'password'          => 'required'
         ]);
+
+        // Ambil input username atau email
+        $input = $request->input('username_or_email');
+        
+        // Tentukan apakah input adalah email atau username
+        $field = filter_var($input, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+        
+        // Buat credentials dengan field yang sesuai
+        $credentials = [
+            $field              => $input,
+            'password'          => $request->input('password')
+        ];
 
         // Mencoba autentikasi user menggunakan data credentials
         if (Auth::attempt($credentials)) {
@@ -38,8 +50,8 @@ class AuthController extends Controller
 
         // Jika login gagal, kembali ke halaman sebelumnya dengan error
         return back()
-            ->withErrors(['name' => 'Incorrect name or password'])
-            ->onlyInput('name'); // Menyimpan kembali input email saja
+            ->withErrors(['username_or_email' => 'Incorrect username/email or password'])
+            ->onlyInput('username_or_email'); // Menyimpan kembali input username_or_email
     }
 
     /**

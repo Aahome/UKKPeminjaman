@@ -15,10 +15,13 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('username')->unique();
             $table->string('email')->unique();
+            $table->string('phone_number')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->foreignId('role_id')->constrained('roles')->cascadeOnDelete();
+            $table->foreignId('grade_id')->nullable()->constrained('grades')->cascadeOnDelete();
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('modified_by')->nullable();
             $table->rememberToken();
@@ -37,7 +40,7 @@ return new class extends Migration
         BEGIN
             INSERT INTO activity_logs (user_id, activity, new_data, old_data, created_at, updated_at)
             VALUES (NEW.created_by, CONCAT('created user Id: ', NEW.id, ' (', NEW.email, ')'), 
-            JSON_OBJECT('id', NEW.id, 'name', NEW.name, 'email', NEW.email), NULL, NOW(), NOW());
+            JSON_OBJECT('id', NEW.id, 'name', NEW.name, 'username', NEW.username, 'email', NEW.email, 'phone_number', NEW.phone_number, 'grade_id', NEW.grade_id), NULL, NOW(), NOW());
         END
         SQL);
 
@@ -51,7 +54,7 @@ return new class extends Migration
         FOR EACH ROW
         BEGIN
             INSERT INTO activity_logs (user_id, activity, new_data, old_data, created_at, updated_at)
-            VALUES (NEW.modified_by, CONCAT('updated user Id: ', NEW.id, ' (', NEW.email, ')'), JSON_OBJECT('id', NEW.id, 'name', NEW.name, 'email', NEW.email), JSON_OBJECT('id', OLD.id, 'name', OLD.name, 'email', OLD.email), NOW(), NOW());
+            VALUES (NEW.modified_by, CONCAT('updated user Id: ', NEW.id, ' (', NEW.email, ')'), JSON_OBJECT('id', NEW.id, 'name', NEW.name, 'username', NEW.username, 'email', NEW.email, 'phone_number', NEW.phone_number, 'grade_id', NEW.grade_id), JSON_OBJECT('id', OLD.id, 'name', OLD.name, 'username', OLD.username, 'email', OLD.email, 'phone_number', OLD.phone_number, 'grade_id', OLD.grade_id), NOW(), NOW());
         END
         SQL);
 

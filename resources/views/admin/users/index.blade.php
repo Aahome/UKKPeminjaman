@@ -95,6 +95,10 @@
                         <tr>
                             <th class="px-6 py-3 text-left w-12">No</th>
                             <th class="px-6 py-3 text-left">Name</th>
+                            <th class="px-6 py-3 text-left">Username</th>
+                            <th class="px-6 py-3 text-left">Email</th>
+                            <th class="px-6 py-3 text-left">Phone</th>
+                            <th class="px-6 py-3 text-left">Grade</th>
                             <th class="px-6 py-3 text-left">Role</th>
                             <th class="px-6 py-3 text-center w-40">Action</th>
                         </tr>
@@ -107,6 +111,22 @@
 
                                 <td class="px-6 py-4 font-medium text-slate-800">
                                     {{ $user->name }}
+                                </td>
+
+                                <td class="px-6 py-4 font-medium text-slate-800">
+                                    {{ $user->username }}
+                                </td>
+
+                                <td class="px-6 py-4 text-slate-600">
+                                    {{ $user->email }}
+                                </td>
+
+                                <td class="px-6 py-4 text-slate-600">
+                                    {{ $user->phone_number }}
+                                </td>
+
+                                <td class="px-6 py-4 text-slate-600">
+                                    {{ optional($user->grade)->grade_name ?? '-' }}
                                 </td>
 
                                 <td class="px-6 py-4">
@@ -130,9 +150,10 @@
                                 <td class="px-6 py-4 text-center">
                                     <div class="flex justify-center gap-2">
                                         <button type="button" data-id="{{ $user->id }}"
-                                            data-name="{{ $user->name }}" data-email="{{ $user->email }}"
-                                            data-role="{{ $user->role_id }}" data-rolename="{{ $user->role->role_name }}"
-                                            onclick="openEditCard(this)"
+                                            data-name="{{ $user->name }}" data-username="{{ $user->username }}"
+                                            data-email="{{ $user->email }}" data-phone="{{ $user->phone_number }}"
+                                            data-grade="{{ $user->grade_id }}" data-role="{{ $user->role_id }}"
+                                            data-rolename="{{ $user->role->role_name }}" onclick="openEditCard(this)"
                                             class="px-3 py-1 text-xs rounded-md bg-amber-100 text-amber-700 hover:bg-amber-200">
                                             Edit
                                         </button>
@@ -152,7 +173,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="px-6 py-6 text-center text-slate-500">
+                                <td colspan="7" class="px-6 py-6 text-center text-slate-500">
                                     No users found.
                                 </td>
                             </tr>
@@ -168,30 +189,62 @@
     @include('admin.users.create')
     @include('admin.users.edit')
 
+    {{-- @php
+        dd($editingUser); // Debug untuk memastikan data user yang diedit tersedia
+    @endphp --}}
+
     <script>
         function openCreateCard() {
             const form = document.getElementById('createForm');
             form.reset();
             form.action = "{{ route('admin.users.store') }}";
             document.getElementById('createUserCard').hidden = false;
-
+            document.getElementById('gradeFieldCreate').style.display = 'none';
         }
 
         function closeCreateCard() {
             document.getElementById('createUserCard').hidden = true;
         }
 
+        function toggleGradeField() {
+            const roleSelect = document.querySelector('#createForm select[name="role_id"]');
+            const gradeField = document.getElementById('gradeFieldCreate');
+            const borrowerRoleId = {{ $roles->where('role_name', 'borrower')->first()?->id ?? 'null' }};
+
+            if (roleSelect && borrowerRoleId && roleSelect.value == borrowerRoleId) {
+                gradeField.style.display = 'block';
+            } else {
+                gradeField.style.display = 'none';
+            }
+        }
+
+        function toggleEditGradeField() {
+            const roleSelect = document.getElementById('editUserRole');
+            const gradeField = document.getElementById('gradeFieldEdit');
+            const borrowerRoleId = {{ $roles->where('role_name', 'borrower')->first()?->id ?? 'null' }};
+
+            if (roleSelect && borrowerRoleId && roleSelect.value == borrowerRoleId) {
+                gradeField.style.display = 'block';
+            } else {
+                gradeField.style.display = 'none';
+            }
+        }
+
         function openEditCard(button) {
             const id = button.dataset.id;
             const roleId = button.dataset.role;
+            const gradeId = button.dataset.grade;
             const roleName = button.dataset.rolename;
 
             document.getElementById('editForm').action = `/admin/users/${id}`;
             document.getElementById('editUserId').value = id;
             document.getElementById('editUserName').value = button.dataset.name;
+            document.getElementById('editUserUsername').value = button.dataset.username;
             document.getElementById('editUserEmail').value = button.dataset.email;
+            document.getElementById('editUserPhone').value = button.dataset.phone;
 
             const roleSelect = document.getElementById('editUserRole');
+            const gradeSelect = document.getElementById('editUserGrade');
 
             // Reset dulu semua option
             for (let option of roleSelect.options) {
@@ -208,6 +261,8 @@
             }
 
             roleSelect.value = roleId;
+            gradeSelect.value = gradeId || '';
+            toggleEditGradeField();
 
             document.getElementById('editUserCard').hidden = false;
         }

@@ -100,6 +100,7 @@
                             <th class="px-6 py-3 text-left w-12">No</th>
                             <th class="px-6 py-3 text-left">Tool Name</th>
                             <th class="px-6 py-3 text-left">Category</th>
+                            <th class="px-6 py-3 text-left">Price</th>
                             <th class="px-6 py-3 text-left">Condition</th>
                             <th class="px-6 py-3 text-left">Stock</th>
                             <th class="px-6 py-3 text-center w-40">Action</th>
@@ -119,6 +120,10 @@
 
                                 <td class="px-6 py-4">
                                     {{ $tool->category->category_name }}
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    Rp {{ number_format($tool->price, 0, ',', '.') }}
                                 </td>
 
                                 <td class="px-6 py-4">
@@ -144,6 +149,7 @@
                                     <div class="flex justify-center gap-2">
                                         <button type="button" data-id="{{ $tool->id }}"
                                             data-name="{{ $tool->tool_name }}" data-category="{{ $tool->category_id }}"
+                                            data-price="{{ $tool->price }}"
                                             data-condition="{{ $tool->condition }}" data-stock="{{ $tool->stock }}"
                                             onclick="openEditCard(this)"
                                             class="px-3 py-1 text-xs rounded-md bg-amber-100 text-amber-700 hover:bg-amber-200">
@@ -165,7 +171,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-6 py-6 text-center text-slate-500">
+                                <td colspan="7" class="px-6 py-6 text-center text-slate-500">
                                     No tools found.
                                 </td>
                             </tr>
@@ -205,6 +211,7 @@
 
             document.getElementById('editToolName').value = button.dataset.name;
             document.getElementById('editToolCategory').value = button.dataset.category;
+            document.getElementById('editToolPrice').value = button.dataset.price;
             document.getElementById('editToolCondition').value = button.dataset.condition;
             document.getElementById('editToolStock').value = button.dataset.stock;
 

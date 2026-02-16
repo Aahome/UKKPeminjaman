@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Role;
+use App\Models\Grade;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -13,8 +14,8 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        // Mengambil data user beserta relasi role, dengan fitur filter pencarian dan filter role
-        $users = User::with('role')
+        // Mengambil data user beserta relasi role dan grade, dengan fitur filter pencarian dan filter role
+        $users = User::with('role', 'grade')
             ->when($request->filled('search'), function ($q) use ($request) {
                 $q->where('name', 'like', '%' . $request->search . '%');
             })
@@ -23,10 +24,11 @@ class UserController extends Controller
             })
             ->get();
 
-        // Mengambil seluruh data role untuk kebutuhan filter
+        // Mengambil seluruh data role dan grade untuk kebutuhan filter
         $roles = Role::all();
+        $gradesData = Grade::all();
 
-        return view('admin.users.index', compact('users', 'roles'));
+        return view('admin.users.index', compact('users', 'roles', 'gradesData'));
     }
 
     // Menyimpan data user baru ke database
@@ -34,10 +36,13 @@ class UserController extends Controller
     {
         // Validasi input form
         $validator = Validator::make($request->all(), [
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users,email',
-            'password' => 'required|min:6|confirmed',
-            'role_id'  => 'required|exists:roles,id',
+            'name'       => 'required|string|max:255',
+            'username'   => 'required|string|unique:users,username|max:255',
+            'email'      => 'required|email|unique:users,email',
+            'phone_number' => 'nullable|string|max:20',
+            'password'   => 'required|min:6|confirmed',
+            'role_id'    => 'required|exists:roles,id',
+            'grade_id'   => 'nullable|exists:grades,id',
         ]);
 
         // Jika validasi gagal, kembalikan ke halaman sebelumnya dengan error dan buka kembali modal create
@@ -52,11 +57,14 @@ class UserController extends Controller
 
         // Menyimpan user baru dengan password yang telah di-hash
         $user = User::create([
-            'name'       => $request->name,
-            'email'      => $request->email,
-            'password'   => Hash::make($request->password),
-            'role_id'    => $request->role_id,
-            'created_by' => Auth::id(),
+            'name'         => $request->name,
+            'username'     => $request->username,
+            'email'        => $request->email,
+            'phone_number' => $request->phone_number,
+            'password'     => Hash::make($request->password),
+            'role_id'      => $request->role_id,
+            'grade_id'     => $request->grade_id,
+            'created_by'   => Auth::id(),
         ]);
 
         return redirect()
@@ -69,10 +77,13 @@ class UserController extends Controller
     {
         // Validasi input form (email unik kecuali untuk user yang sedang diedit)
         $validator = Validator::make($request->all(), [
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users,email,' . $user->id,
-            'password' => 'nullable|min:6|confirmed',
-            'role_id'  => 'required|exists:roles,id',
+            'name'         => 'required|string|max:255',
+            'username'     => 'required|string|max:255|unique:users,username,' . $user->id,
+            'email'        => 'required|email|unique:users,email,' . $user->id,
+            'phone_number' => 'nullable|string|max:20',
+            'password'     => 'nullable|min:6|confirmed',
+            'role_id'      => 'required|exists:roles,id',
+            'grade_id'     => 'nullable|exists:grades,id',
         ]);
 
         // Jika validasi gagal, kembalikan dengan error dan buka kembali modal edit
@@ -99,6 +110,9 @@ class UserController extends Controller
         }
 
         $validated['modified_by'] = Auth::id();
+        $validated['username'] = $request->username;
+        $validated['phone_number'] = $request->phone_number;
+        $validated['grade_id'] = $request->grade_id;
 
         // Update data user
         $user->update($validated);

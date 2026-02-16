@@ -16,6 +16,7 @@ return new class extends Migration
             $table->id();
             $table->string('tool_name');
             $table->foreignId('category_id')->constrained()->cascadeOnDelete();
+            $table->decimal('price', 10, 2);
             $table->integer('stock');
             $table->enum('condition', ['good', 'damaged'])->default('good');
             $table->unsignedBigInteger('created_by')->nullable();
@@ -34,7 +35,7 @@ return new class extends Migration
         FOR EACH ROW
         BEGIN
             INSERT INTO activity_logs (user_id, activity, new_data, old_data, created_at, updated_at)
-            VALUES (NEW.created_by, CONCAT('created tool Id: ', NEW.id), JSON_OBJECT('id', NEW.id, 'tool_name', NEW.tool_name, 'stock', NEW.stock, 'condition', NEW.condition), NULL, NOW(), NOW());
+            VALUES (NEW.created_by, CONCAT('created tool Id: ', NEW.id), JSON_OBJECT('id', NEW.id, 'tool_name', NEW.tool_name, 'price', NEW.price, 'stock', NEW.stock, 'condition', NEW.condition), NULL, NOW(), NOW());
         END
         SQL);
 
@@ -49,7 +50,7 @@ return new class extends Migration
         FOR EACH ROW
         BEGIN
             INSERT INTO activity_logs (user_id, activity, new_data, old_data, created_at, updated_at)
-            VALUES (NEW.modified_by, CONCAT('updated tool Id: ', NEW.id), JSON_OBJECT('id', NEW.id, 'tool_name', NEW.tool_name, 'stock', NEW.stock, 'condition', NEW.condition), JSON_OBJECT('id', OLD.id, 'tool_name', OLD.tool_name, 'stock', OLD.stock, 'condition', OLD.condition), NOW(), NOW());
+            VALUES (NEW.modified_by, CONCAT('updated tool Id: ', NEW.id), JSON_OBJECT('id', NEW.id, 'tool_name', NEW.tool_name, 'price', NEW.price, 'stock', NEW.stock, 'condition', NEW.condition), JSON_OBJECT('id', OLD.id, 'tool_name', OLD.tool_name, 'price', OLD.price, 'stock', OLD.stock, 'condition', OLD.condition), NOW(), NOW());
         END
         SQL);
 
@@ -63,7 +64,7 @@ return new class extends Migration
         FOR EACH ROW
         BEGIN
             INSERT INTO activity_logs (user_id, activity, new_data, old_data, created_at, updated_at)
-            VALUES (OLD.modified_by, CONCAT('deleted tool Id: ', OLD.id), NULL, JSON_OBJECT('id', OLD.id, 'tool_name', OLD.tool_name, 'stock', OLD.stock, 'condition', OLD.condition), NOW(), NOW());
+            VALUES (OLD.modified_by, CONCAT('deleted tool Id: ', OLD.id), NULL, JSON_OBJECT('id', OLD.id, 'tool_name', OLD.tool_name, 'price', OLD.price, 'stock', OLD.stock, 'condition', OLD.condition), NOW(), NOW());
         END
         SQL);
     }
