@@ -14,14 +14,12 @@ return new class extends Migration
         DB::unprepared('DROP FUNCTION IF EXISTS fine_count');
 
         DB::unprepared("
-            CREATE FUNCTION fine_count(date1 DATE, date2 DATE, qty INT)
-            RETURNS INT
+            CREATE FUNCTION fine_count(date1 DATE, date2 DATE, qty INT, price DECIMAL(10,2))
+            RETURNS DECIMAL(12,2)
             DETERMINISTIC
-            -- Menghitung denda berdasarkan:
-            -- (selisih hari keterlambatan x 5000 x jumlah barang)
-            -- GREATEST digunakan agar hasil tidak pernah negatif
+            COMMENT 'Menghitung denda berdasarkan total harga (quantity x price) x jumlah hari keterlambatan x 1%'
             RETURN (
-                GREATEST(DATEDIFF(date2, date1), 0) * 5000 * qty
+                GREATEST(DATEDIFF(date2, date1), 0) * 0.01 * qty * price
             );
         ");
     }

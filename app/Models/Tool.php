@@ -13,6 +13,7 @@ class Tool extends Model
         'category_id',
         'stock',
         'condition',
+        'price',
         'created_by',
         'modified_by',
     ];

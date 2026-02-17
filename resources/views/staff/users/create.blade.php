@@ -5,7 +5,7 @@
         <!-- Header -->
         <div class="px-6 py-4 border-b border-slate-200">
             <h3 class="font-semibold text-slate-800">
-                Add New User
+                Add New Borrower
             </h3>
         </div>
 
@@ -77,9 +77,9 @@
             </div>
 
             <!-- Grade -->
-            <div id="gradeFieldCreate" style="display: none;">
+            <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">
-                    Grade (Optional)
+                    Grade
                 </label>
                 <select name="grade_id"
                     class="w-full px-4 py-2 border rounded-lg text-sm
@@ -97,37 +97,6 @@
                 </select>
 
                 @error('grade_id')
-                    <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <!-- Role -->
-            <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1">
-                    Role
-                </label>
-                <select name="role_id" onchange="toggleGradeField()"
-                    class="w-full px-4 py-2 border rounded-lg text-sm
-                               focus:ring focus:ring-blue-200 focus:border-blue-500 outline-none
-                               @error('role_id') border-red-400 @enderror"
-                    required>
-
-                    @if ($roles->isEmpty())
-                        <option disabled selected>
-                            Belum Ada Role
-                        </option>
-                    @else
-                        <option value="">Select Role</option>
-                        @foreach ($roles as $role)
-                            <option value="{{ $role->id }}"
-                                {{ (session('form_context') === 'create' ? old('role_id') : '') == $role->id ? 'selected' : '' }}>
-                                {{ ucfirst($role->role_name) }}
-                            </option>
-                        @endforeach
-                    @endif
-                </select>
-
-                @error('role_id')
                     <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
                 @enderror
             </div>
@@ -167,7 +136,7 @@
                 <button type="submit"
                     class="px-6 py-2 text-sm rounded-lg
                                bg-blue-600 text-white hover:bg-blue-700">
-                    Save User
+                    Save Borrower
                 </button>
             </div>
 

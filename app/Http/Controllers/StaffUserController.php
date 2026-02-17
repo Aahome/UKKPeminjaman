@@ -10,25 +10,25 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
-class UserController extends Controller
+class StaffUserController extends Controller
 {
     public function index(Request $request)
     {
-        // Mengambil data user beserta relasi role dan grade, dengan fitur filter pencarian dan filter role
+        // Mengambil data borrower users saja beserta relasi role dan grade
         $users = User::with('role', 'grade')
+            ->whereHas('role', function ($q) {
+                $q->where('role_name', 'borrower');
+            })
             ->when($request->filled('search'), function ($q) use ($request) {
                 $q->where('name', 'like', '%' . $request->search . '%');
             })
-            ->when($request->filled('role'), function ($q) use ($request) {
-                $q->where('role_id', $request->role);
-            })
             ->get();
 
-        // Mengambil seluruh data role dan grade untuk kebutuhan filter
-        $roles = Role::all();
+        // Mengambil hanya borrower role dan semua grades
+        $roles = Role::where('role_name', 'borrower')->get();
         $gradesData = Grade::all();
 
-        return view('admin.users.index', compact('users', 'roles', 'gradesData'));
+        return view('staff.users.index', compact('users', 'roles', 'gradesData'));
     }
 
     // Menyimpan data user baru ke database
@@ -41,8 +41,7 @@ class UserController extends Controller
             'email'      => 'required|email|unique:users,email',
             'phone_number' => 'nullable|string|max:20',
             'password'   => 'required|min:6|confirmed',
-            'role_id'    => 'required|exists:roles,id',
-            'grade_id'   => 'nullable|exists:grades,id',
+            'grade_id'   => 'required|exists:grades,id',
         ]);
 
         // Jika validasi gagal, kembalikan ke halaman sebelumnya dengan error dan buka kembali modal create
@@ -55,34 +54,30 @@ class UserController extends Controller
                 ->with('form_context', 'create');
         }
 
-        // Cek apakah grade dipilih tetapi role bukan borrower
-        if ($request->filled('grade_id')) {
-            $role = Role::find($request->role_id);
-            if ($role && $role->role_name !== 'borrower') {
-                return back()
-                    ->withErrors(['grade_id' => 'Grade can only be assigned to borrower users.'])
-                    ->withInput()
-                    ->with('error', 'Grade can only be assigned to borrower users.')
-                    ->with('open_create', true)
-                    ->with('form_context', 'create');
-            }
+        // Get borrower role
+        $borrowerRole = Role::where('role_name', 'borrower')->first();
+        if (!$borrowerRole) {
+            return back()
+                ->with('error', 'Borrower role not found in system.')
+                ->with('open_create', true)
+                ->with('form_context', 'create');
         }
 
-        // Menyimpan user baru dengan password yang telah di-hash
+        // Menyimpan user baru dengan password yang telah di-hash dan role borrower
         $user = User::create([
             'name'         => $request->name,
             'username'     => $request->username,
             'email'        => $request->email,
             'phone_number' => $request->phone_number,
             'password'     => Hash::make($request->password),
-            'role_id'      => $request->role_id,
+            'role_id'      => $borrowerRole->id,
             'grade_id'     => $request->grade_id,
             'created_by'   => Auth::id(),
         ]);
 
         return redirect()
-            ->route('admin.users.index')
-            ->with('success', 'User created successfully.');
+            ->route('staff.users.index')
+            ->with('success', 'Borrower created successfully.');
     }
 
     // Memperbarui data user yang sudah ada
@@ -95,8 +90,7 @@ class UserController extends Controller
             'email'        => 'required|email|unique:users,email,' . $user->id,
             'phone_number' => 'nullable|string|max:20',
             'password'     => 'nullable|min:6|confirmed',
-            'role_id'      => 'required|exists:roles,id',
-            'grade_id'     => 'nullable|exists:grades,id',
+            'grade_id'     => 'required|exists:grades,id',
         ]);
 
         // Jika validasi gagal, kembalikan dengan error dan buka kembali modal edit
@@ -109,19 +103,6 @@ class UserController extends Controller
                 ->with('form_context', 'edit');
         }
 
-        // Cek apakah grade dipilih tetapi role bukan borrower
-        if ($request->filled('grade_id')) {
-            $role = Role::find($request->role_id);
-            if ($role && $role->role_name !== 'borrower') {
-                return back()
-                    ->withErrors(['grade_id' => 'Grade can only be assigned to borrower users.'])
-                    ->withInput()
-                    ->with('error', 'Grade can only be assigned to borrower users.')
-                    ->with('open_edit', true)
-                    ->with('form_context', 'edit');
-            }
-        }
-
         $validated = $validator->validated();
 
         // Hash password hanya jika field password diisi
@@ -129,10 +110,6 @@ class UserController extends Controller
             $validated['password'] = Hash::make($validated['password']);
         } else {
             unset($validated['password']);
-        }
-
-        if ($user->role->role_name === 'admin' && $request->role_id != $user->role_id) {
-            return back()->with('error', 'Admin role cannot be changed.');
         }
 
         $validated['modified_by'] = Auth::id();
@@ -144,8 +121,8 @@ class UserController extends Controller
         $user->update($validated);
 
         return redirect()
-            ->route('admin.users.index')
-            ->with('success', 'User updated successfully.');
+            ->route('staff.users.index')
+            ->with('success', 'Borrower updated successfully.');
     }
 
     public function destroy(User $user)
@@ -161,6 +138,6 @@ class UserController extends Controller
         $user->delete();
 
         // Redirect kembali ke halaman sebelumnya dengan pesan sukses
-        return back()->with('success', 'user deleted');
+        return back()->with('success', 'Borrower deleted successfully.');
     }
 }

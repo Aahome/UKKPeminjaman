@@ -100,7 +100,8 @@ return new class extends Migration
             DECLARE v_tool_id INT;
             DECLARE v_qty INT;
             DECLARE v_due_date DATE;
-            DECLARE v_fine INT;
+            DECLARE v_price DECIMAL(10,2);
+            DECLARE v_fine DECIMAL(12,2);
             DECLARE v_status VARCHAR(20);
             DECLARE v_return_exists INT;
 
@@ -120,6 +121,11 @@ return new class extends Migration
             WHERE id = p_borrowing_id
             FOR UPDATE;
 
+            -- Ambil harga tool
+            SELECT price INTO v_price
+            FROM tools
+            WHERE id = v_tool_id;
+
             -- Check if status is returned and return data already exists
             SELECT COUNT(*) INTO v_return_exists
             FROM returns
@@ -129,8 +135,8 @@ return new class extends Migration
                 SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'This borrowing has already been returned.';
             END IF;
 
-            -- Hitung denda menggunakan fine_count function
-            SELECT fine_count(v_due_date, CURDATE(), v_qty) INTO v_fine;
+            -- Hitung denda menggunakan fine_count function dengan price parameter
+            SELECT fine_count(v_due_date, CURDATE(), v_qty, v_price) INTO v_fine;
 
             -- Simpan data pengembalian
             INSERT INTO returns (borrowing_id, return_date, fine, created_at, updated_at)

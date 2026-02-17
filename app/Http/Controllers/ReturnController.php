@@ -72,8 +72,8 @@ class ReturnController extends Controller
         // Menghitung ulang denda berdasarkan tanggal baru
         if ($returnDate->greaterThan($dueDate)) {
             $fine = DB::selectOne("
-            SELECT fine_count(?, ?, ?) AS total
-            ", [$dueDate, $returnDate, $return->borrowing->quantity])->total;
+            SELECT fine_count(?, ?, ?, ?) AS total
+            ", [$dueDate, $returnDate, $return->borrowing->quantity, $return->borrowing->tool->price])->total;
         } else {
             $fine = 0;
         }

@@ -41,6 +41,7 @@ class ToolController extends Controller
             'category_id' => 'required|exists:categories,id',
             'condition'   => 'required|in:good,damaged',
             'stock'       => 'required|integer|min:0',
+            'price'       => 'required|numeric|min:0',
         ]);
 
         // Jika validasi gagal, kembali dengan error dan buka modal create
@@ -58,7 +59,8 @@ class ToolController extends Controller
             'tool_name',
             'category_id',
             'condition',
-            'stock'
+            'stock',
+            'price'
         ]) + ['created_by' => Auth::id()]);
 
         return redirect()
@@ -77,6 +79,7 @@ class ToolController extends Controller
             'category_id' => 'required|exists:categories,id',
             'condition'   => 'required|in:good,damaged',
             'stock'       => 'required|integer|min:0',
+            'price'       => 'required|numeric|min:0',
         ]);
 
         // Jika validasi gagal, kembali dengan error dan buka modal edit
@@ -94,7 +97,8 @@ class ToolController extends Controller
             'tool_name',
             'category_id',
             'condition',
-            'stock'
+            'stock',
+            'price'
         ]) + ['modified_by' => Auth::id()]);
 
         return redirect()

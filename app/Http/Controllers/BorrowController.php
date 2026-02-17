@@ -104,8 +104,8 @@ class BorrowController extends Controller
             $dueDate  = Carbon::parse($borrowing->due_date);
 
             $fine = DB::selectOne("
-            SELECT fine_count(?, ?, ?) AS total
-            ", [$dueDate, $today, $request->quantity])->total;
+            SELECT fine_count(?, ?, ?, ?) AS total
+            ", [$dueDate, $today, $request->quantity, $tool->price])->total;
 
             ReturnModel::create([
                 'borrowing_id' => $borrowing->id,

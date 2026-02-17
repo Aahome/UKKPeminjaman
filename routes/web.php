@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\StaffUserController;
 use App\Http\Controllers\ToolController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\RoleController;
@@ -136,6 +137,9 @@ Route::middleware(['auth', 'role:staff'])
         // Dashboard staff
         Route::get('/dashboard', [HomeController::class, 'staffDashboard'])
             ->name('dashboard');
+
+        // Resource Users (Borrower Management)
+        Route::resource('users', StaffUserController::class)->except('show', 'create', 'edit');
 
         // Menampilkan daftar peminjaman
         Route::get('/borrowings', [BorrowController::class, 'index'])

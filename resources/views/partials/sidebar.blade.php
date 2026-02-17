@@ -143,6 +143,13 @@
                     Dashboard
                 </a>
 
+                {{-- Menu Borrower Management --}}
+                <a href="{{ route('staff.users.index') }}"
+                    class="flex items-center gap-3 px-4 py-2 rounded-lg 
+                    {{ request()->routeIs('staff.users.*') ? 'bg-blue-600 text-white' : 'hover:bg-slate-100 text-slate-700' }}">
+                    Borrower Management
+                </a>
+
                 {{-- Menu Data Peminjaman --}}
                 <a href="{{ route('staff.borrowings.index') }}"
                     class="flex items-center gap-3 px-4 py-2 rounded-lg 
@@ -156,6 +163,7 @@
                     {{ request()->routeIs('staff.returns.*') ? 'bg-blue-600 text-white' : 'hover:bg-slate-100 text-slate-700' }}">
                     Return Monitoring
                 </a>
+                
             </nav>
         @elseif ($role === 'borrower')
             {{-- Sidebar Borrower --}}
