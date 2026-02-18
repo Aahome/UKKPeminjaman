@@ -65,13 +65,13 @@
                 <table class="w-full text-sm">
                     <thead class="bg-slate-50 text-slate-500">
                         <tr>
-                            <th class="px-6 py-3 text-left w-12">No</th>
-                            <th class="px-6 py-3 text-left">Tool</th>
-                            <th class="px-6 py-3 text-left">Quantity</th>
+                            <th class="px-6 py-3 text-center w-12">No</th>
+                            <th class="px-6 py-3 text-left">Tool & Quantity</th>
+                            <th class="px-6 py-3 text-left">Price & Fine</th>
                             <th class="px-6 py-3 text-left">Borrow Date</th>
                             <th class="px-6 py-3 text-left">Due Date</th>
-                            <th class="px-6 py-3 text-left">Fine</th>
-                            <th class="px-6 py-3 text-left">Status</th>
+                            <th class="px-6 py-3 text-right">Total</th>
+                            <th class="px-6 py-3 text-center">Status</th>
                             <th class="px-6 py-3 text-center">Created At</th>
                             <th class="px-6 py-3 text-center w-48">Action</th>
                         </tr>
@@ -79,6 +79,32 @@
 
                     <tbody class="divide-y divide-slate-200">
                         @forelse ($borrowings as $borrowing)
+
+                        @php
+                            $today = \Carbon\Carbon::today();
+                            $due = \Carbon\Carbon::parse($borrowing->due_date);
+
+                            if (!$borrowing->returnData) {
+                                // Return already confirmed → use stored fine
+                                $totalPrice = DB::selectOne("
+                                SELECT total_price(?, ?) AS total
+                                ", [$borrowing->quantity, $borrowing->tool->price])->total;
+
+                                $fine = DB::selectOne("
+                                SELECT fine_count(?, ?, ?) AS total
+                                ", [$due, $today, $totalPrice])->total;
+                            } else {
+                                // $fine = DB::selectOne("
+                                // SELECT fine_count(?, ?, ?, ?) AS total
+                                // ", [$due, $today, $borrowing->quantity, $borrowing->tool->price])->total;
+                                
+                                // $totalPrice = DB::selectOne("
+                                // SELECT total_price(?, ?) AS total
+                                // ", [$borrowing->quantity, $borrowing->tool->price])->total;
+
+                                
+                            }
+                        @endphp
                             <tr class="hover:bg-slate-50">
 
                                 <td class="px-6 py-4">
@@ -86,11 +112,11 @@
                                 </td>
 
                                 <td class="px-6 py-4 font-medium text-slate-800">
-                                    {{ $borrowing->tool->tool_name }}
+                                    {{ $borrowing->tool->tool_name }} ({{ $borrowing->quantity }})
                                 </td>
 
                                 <td class="px-6 py-4 font-medium text-slate-800">
-                                    {{ $borrowing->quantity }}
+                                    Rp {{ number_format($borrowing->returnData->total_price ?? ($totalPrice ?? 0 ) , 0, ',', '.') }} | Rp {{ number_format($borrowing->returnData?->fine ?? ($fine ?? 0 ), 0, ',', '.') }}
                                 </td>
 
                                 <td class="px-6 py-4">
@@ -101,11 +127,13 @@
                                     {{ \Carbon\Carbon::parse($borrowing->due_date)->format('d M Y') }}
                                 </td>
 
-                                <td class="px-6 py-4 text-center">
-                                    {{ $borrowing->returnData?->fine ?? '-' }}
+                                <td class="px-6 py-4 text-right">
+                                    {{-- {{ $borrowing->returnData?->fine ?? ($fine ?? '-') }} --}}
+                                    
+                                Rp {{ number_format($borrowing->returnData?->fine ?? ($fine ?? 0 ) + ($borrowing->returnData->total_price ?? ($totalPrice ?? 0 )), 0, ',', '.') }}
                                 </td>
 
-                                <td class="px-6 py-4">
+                                <td class="px-6 py-4 text-center">
                                     @php
                                         $statusColor = match ($borrowing->status) {
                                             'pending' => 'bg-amber-100 text-amber-700',
@@ -121,7 +149,7 @@
                                     </span>
                                 </td>
 
-                                <td class="px-6 py-4">
+                                <td class="px-6 py-4 text-center">
                                     {{ $borrowing->created_at }}
                                 </td>
 

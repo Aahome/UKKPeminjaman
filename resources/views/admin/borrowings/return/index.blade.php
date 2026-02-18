@@ -53,7 +53,7 @@
                             </td>
 
                             <td class="px-6 py-4 text-red-600 font-semibold">
-                                Rp {{ number_format($return->fine, 0, ',', '.') }}
+                                Rp {{ number_format($return->fine + $return->total_price, 0, ',', '.') }}
                             </td>
 
                             <td class="px-6 py-4">

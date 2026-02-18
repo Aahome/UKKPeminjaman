@@ -97,10 +97,11 @@ return new class extends Migration
         DB::unprepared(<<<'SQL'
         CREATE PROCEDURE store_return(IN p_borrowing_id INT)
         BEGIN
-            DECLARE v_tool_id INT;
+        DECLARE v_tool_id INT;
             DECLARE v_qty INT;
             DECLARE v_due_date DATE;
             DECLARE v_price DECIMAL(10,2);
+            DECLARE v_total_price DECIMAL(12,2);
             DECLARE v_fine DECIMAL(12,2);
             DECLARE v_status VARCHAR(20);
             DECLARE v_return_exists INT;
@@ -135,8 +136,11 @@ return new class extends Migration
                 SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'This borrowing has already been returned.';
             END IF;
 
-            -- Hitung denda menggunakan fine_count function dengan price parameter
-            SELECT fine_count(v_due_date, CURDATE(), v_qty, v_price) INTO v_fine;
+            -- Hitung total_price menggunakan total_price function
+            SELECT total_price(v_qty, v_price) INTO v_total_price;
+
+            -- Hitung denda menggunakan fine_count function dengan total_price
+            SELECT fine_count(v_due_date, CURDATE(), v_total_price) INTO v_fine;
 
             -- Simpan data pengembalian
             INSERT INTO returns (borrowing_id, return_date, fine, created_at, updated_at)

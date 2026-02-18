@@ -94,6 +94,7 @@
                             <th class="px-6 py-3 text-left w-12">No</th>
                             <th class="px-6 py-3 text-left">Tool Name</th>
                             <th class="px-6 py-3 text-left">Category</th>
+                            <th class="px-6 py-3 text-left">Price</th>
                             <th class="px-6 py-3 text-left">Condition</th>
                             <th class="px-6 py-3 text-left">Stock</th>
                             <th class="px-6 py-3 text-center w-40">Action</th>
@@ -113,6 +114,10 @@
 
                                 <td class="px-6 py-4">
                                     {{ $tool->category->category_name }}
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    {{ $tool->price }}
                                 </td>
 
                                 <td class="px-6 py-4">

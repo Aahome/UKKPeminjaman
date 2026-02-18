@@ -102,15 +102,21 @@ class BorrowController extends Controller
         if ($request->status === 'returned') {
             $today    = Carbon::today();
             $dueDate  = Carbon::parse($borrowing->due_date);
+            
+            $totalPrice = DB::selectOne("
+            SELECT total_price(?, ?) AS total
+            ", [$request->quantity, $tool->price])->total;
 
             $fine = DB::selectOne("
-            SELECT fine_count(?, ?, ?, ?) AS total
-            ", [$dueDate, $today, $request->quantity, $tool->price])->total;
+            SELECT fine_count(?, ?, ?) AS total
+            ", [$dueDate, $today, $totalPrice])->total;
+
 
             ReturnModel::create([
                 'borrowing_id' => $borrowing->id,
                 'return_date'  => $today,
                 'fine'         => $fine,
+                'total_price'  => $totalPrice,
                 'created_by'   => Auth::id(),
             ]);
         }
@@ -229,10 +235,15 @@ class BorrowController extends Controller
         // Jika masuk ke status returned, buat return data jika belum ada
         if (($oldStatus !== 'returned' && $newStatus === 'returned') || ($oldStatus == 'returned' && $newStatus === 'returned')) {
             if (!$borrow->returnData) {
+                $totalPrice = DB::selectOne("
+                SELECT total_price(?, ?) AS total
+                ", [$borrow->quantity, $borrow->tool->price])->total;
+
                 ReturnModel::create([
                     'borrowing_id' => $borrow->id,
                     'return_date'  => now(),
                     'fine'         => $request->fine ?? 0,
+                    'total_price'  => $totalPrice,
                     'created_by'   => Auth::id(),
                 ]);
             }

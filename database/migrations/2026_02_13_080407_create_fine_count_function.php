@@ -12,14 +12,25 @@ return new class extends Migration
     {
         // Hapus function jika sudah ada untuk menghindari error saat migrate ulang
         DB::unprepared('DROP FUNCTION IF EXISTS fine_count');
+        DB::unprepared('DROP FUNCTION IF EXISTS total_price');
 
         DB::unprepared("
-            CREATE FUNCTION fine_count(date1 DATE, date2 DATE, qty INT, price DECIMAL(10,2))
+            CREATE FUNCTION fine_count(date1 DATE, date2 DATE, total_price DECIMAL(12,2))
             RETURNS DECIMAL(12,2)
             DETERMINISTIC
-            COMMENT 'Menghitung denda berdasarkan total harga (quantity x price) x jumlah hari keterlambatan x 1%'
+            COMMENT 'Menghitung denda berdasarkan total harga x jumlah hari keterlambatan x 1%'
             RETURN (
-                GREATEST(DATEDIFF(date2, date1), 0) * 0.01 * qty * price
+                GREATEST(DATEDIFF(date2, date1), 0) * 0.01 * total_price
+            );
+        ");
+
+        DB::unprepared("
+            CREATE FUNCTION total_price(qty INT, price DECIMAL(10,2))
+            RETURNS DECIMAL(12,2)
+            DETERMINISTIC
+            COMMENT 'Menghitung total harga (quantity x price)'
+            RETURN (
+                qty * price
             );
         ");
     }
@@ -31,5 +42,6 @@ return new class extends Migration
     {
         // Menghapus function saat rollback migration
         DB::unprepared('DROP FUNCTION IF EXISTS fine_count');
+        DB::unprepared('DROP FUNCTION IF EXISTS total_price');
     }
 };

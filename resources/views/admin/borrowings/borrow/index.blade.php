@@ -20,8 +20,8 @@
                     <tr>
                         <th class="px-6 py-3 text-left">No</th>
                         <th class="px-6 py-3 text-left">Borrower</th>
-                        <th class="px-6 py-3 text-left">Tool</th>
-                        <th class="px-6 py-3 text-left">Quantity</th>
+                        <th class="px-6 py-3 text-left">Tool & Quantity</th>
+                        <th class="px-6 py-3 text-left">Total Borrow Price</th>
                         <th class="px-6 py-3 text-left">Borrow Date</th>
                         <th class="px-6 py-3 text-left">Due Date</th>
                         <th class="px-6 py-3 text-left">Fine</th>
@@ -38,15 +38,30 @@
                             $today = \Carbon\Carbon::today();
                             $due = \Carbon\Carbon::parse($borrowing->due_date);
 
+                            
+
                             if ($borrowing->returnData) {
                                 // Return already confirmed → use stored fine
                                 $returnOn = \Carbon\Carbon::parse($borrowing->returnData->return_date); // <-- convert to Carbon
                                 $lateDays = $returnOn->greaterThan($due) ? $returnOn->diffInDays($due) : 0;
                                 $fine = $borrowing->returnData->fine;
+                                $totalPrice = $borrowing->returnData->total_price;
                             } else {
+                                // $fine = DB::selectOne("
+                                // SELECT fine_count(?, ?, ?, ?) AS total
+                                // ", [$due, $today, $borrowing->quantity, $borrowing->tool->price])->total;
+                                
+                                // $totalPrice = DB::selectOne("
+                                // SELECT total_price(?, ?) AS total
+                                // ", [$borrowing->quantity, $borrowing->tool->price])->total;
+
+                                $totalPrice = DB::selectOne("
+                                SELECT total_price(?, ?) AS total
+                                ", [$borrowing->quantity, $borrowing->tool->price])->total;
+
                                 $fine = DB::selectOne("
-                                SELECT fine_count(?, ?, ?, ?) AS total
-                                ", [$due, $today, $borrowing->quantity, $borrowing->tool->price])->total;
+                                SELECT fine_count(?, ?, ?) AS total
+                                ", [$due, $today, $totalPrice])->total;
                             }
                         @endphp
 
@@ -60,11 +75,11 @@
                             </td>
 
                             <td class="px-6 py-4">
-                                {{ $borrowing->tool->tool_name }}
+                                {{ $borrowing->tool->tool_name }} ({{ $borrowing->quantity }})
                             </td>
 
                             <td class="px-6 py-4">
-                                {{ $borrowing->quantity }}
+                                Rp {{ number_format($totalPrice, 0, ',', '.') }}
                             </td>
 
                             <td class="px-6 py-4">

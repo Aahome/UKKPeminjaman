@@ -13,6 +13,7 @@ class ReturnModel extends Model
         'borrowing_id',
         'return_date',
         'fine',
+        'total_price',
         'created_by',
         'modified_by',
     ];

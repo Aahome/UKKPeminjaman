@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('borrowing_id')->constrained()->cascadeOnDelete();
             $table->date('return_date');
             $table->integer('fine')->default(0);
+            $table->decimal('total_price', 12, 2)->default(0);
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('modified_by')->nullable();
             $table->timestamps();
@@ -33,7 +34,7 @@ return new class extends Migration
         FOR EACH ROW
         BEGIN
             INSERT INTO activity_logs (user_id, activity, new_data, old_data, created_at, updated_at)
-            VALUES (NEW.created_by, CONCAT('created return Id: ', NEW.id, ' for borrowing Id: ', NEW.borrowing_id), JSON_OBJECT('id', NEW.id, 'borrowing_id', NEW.borrowing_id, 'return_date', NEW.return_date, 'fine', NEW.fine), NULL, NOW(), NOW());
+            VALUES (NEW.created_by, CONCAT('created return Id: ', NEW.id, ' for borrowing Id: ', NEW.borrowing_id), JSON_OBJECT('id', NEW.id, 'borrowing_id', NEW.borrowing_id, 'return_date', NEW.return_date, 'fine', NEW.fine, 'total_price', NEW.total_price), NULL, NOW(), NOW());
         END
         SQL);
 
@@ -47,7 +48,7 @@ return new class extends Migration
         FOR EACH ROW
         BEGIN
             INSERT INTO activity_logs (user_id, activity, new_data, old_data, created_at, updated_at)
-            VALUES (NEW.modified_by, CONCAT('updated return Id: ', NEW.id, ' for borrowing Id: ', NEW.borrowing_id), JSON_OBJECT('id', NEW.id, 'borrowing_id', NEW.borrowing_id, 'return_date', NEW.return_date, 'fine', NEW.fine), JSON_OBJECT('id', OLD.id, 'borrowing_id', OLD.borrowing_id, 'return_date', OLD.return_date, 'fine', OLD.fine), NOW(), NOW());
+            VALUES (NEW.modified_by, CONCAT('updated return Id: ', NEW.id, ' for borrowing Id: ', NEW.borrowing_id), JSON_OBJECT('id', NEW.id, 'borrowing_id', NEW.borrowing_id, 'return_date', NEW.return_date, 'fine', NEW.fine, 'total_price', NEW.total_price), JSON_OBJECT('id', OLD.id, 'borrowing_id', OLD.borrowing_id, 'return_date', OLD.return_date, 'fine', OLD.fine, 'total_price', OLD.total_price), NOW(), NOW());
         END
         SQL);
 
@@ -61,7 +62,7 @@ return new class extends Migration
         FOR EACH ROW
         BEGIN
             INSERT INTO activity_logs (user_id, activity, new_data, old_data, created_at, updated_at)
-            VALUES (OLD.modified_by, CONCAT('deleted return Id: ', OLD.id, ' for borrowing Id: ', OLD.borrowing_id), NULL, JSON_OBJECT('id', OLD.id, 'borrowing_id', OLD.borrowing_id, 'return_date', OLD.return_date, 'fine', OLD.fine), NOW(), NOW());
+            VALUES (OLD.modified_by, CONCAT('deleted return Id: ', OLD.id, ' for borrowing Id: ', OLD.borrowing_id), NULL, JSON_OBJECT('id', OLD.id, 'borrowing_id', OLD.borrowing_id, 'return_date', OLD.return_date, 'fine', OLD.fine, 'total_price', OLD.total_price), NOW(), NOW());
         END
         SQL);
     }
