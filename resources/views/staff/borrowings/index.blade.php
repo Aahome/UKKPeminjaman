@@ -48,8 +48,8 @@
                         <tr>
                             <th class="px-6 py-3 text-left">No</th>
                             <th class="px-6 py-3 text-left">Borrower</th>
-                            <th class="px-6 py-3 text-left">Tool</th>
-                            <th class="px-6 py-3 text-left">Quantity</th>
+                            <th class="px-6 py-3 text-left">Tool & Quantity</th>
+                            <th class="px-6 py-3 text-left">Total Borrow Price</th>
                             <th class="px-6 py-3 text-left">Borrow Date</th>
                             <th class="px-6 py-3 text-left">Due Date</th>
                             <th class="px-6 py-3 text-center">Status</th>
@@ -60,6 +60,22 @@
 
                     <tbody class="divide-y divide-slate-200">
                         @forelse ($borrowings as $borrowing)
+
+                        @php
+                            $today = \Carbon\Carbon::today();
+                            $due = \Carbon\Carbon::parse($borrowing->due_date);
+
+                            if (!$borrowing->returnData) {
+                                // Return already confirmed → use stored fine
+                                $totalPrice = DB::selectOne("
+                                SELECT total_price(?, ?) AS total
+                                ", [$borrowing->quantity, $borrowing->tool->price])->total;
+
+                                $fine = DB::selectOne("
+                                SELECT fine_count(?, ?, ?) AS total
+                                ", [$due, $today, $totalPrice])->total;
+                            }
+                        @endphp
                             <tr class="hover:bg-slate-50">
                                 <td class="px-6 py-4">
                                     {{ $loop->iteration }}
@@ -70,11 +86,11 @@
                                 </td>
 
                                 <td class="px-6 py-4">
-                                    {{ $borrowing->tool->tool_name }}
+                                    {{ $borrowing->tool->tool_name }} ({{ $borrowing->quantity }})
                                 </td>
 
                                 <td class="px-6 py-4">
-                                    {{ $borrowing->quantity }}
+                                    Rp {{ number_format($borrowing->returnData->total_price ?? ($totalPrice ?? 0 ) , 0, ',', '.') }}
                                 </td>
 
                                 <td class="px-6 py-4">

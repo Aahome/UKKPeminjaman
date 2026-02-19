@@ -77,12 +77,13 @@
                                     // Belum dikembalikan → hitung berdasarkan hari ini
                                     $lateDays = $today->greaterThan($due) ? $today->diffInDays($due) : 0;
 
-                                    $fine = DB::selectOne('SELECT fine_count(?, ?, ?, ?) AS total', [
-                                        $due,
-                                        $today,
-                                        $borrowing->quantity,
-                                        $borrowing->tool->price,
-                                    ])->total;
+                                    $totalPrice = DB::selectOne("
+                                    SELECT total_price(?, ?) AS total
+                                    ", [$borrowing->quantity, $borrowing->tool->price])->total;
+
+                                    $fine = DB::selectOne("
+                                    SELECT fine_count(?, ?, ?) AS total
+                                    ", [$due, $today, $totalPrice])->total;
                                 }
                             @endphp
 

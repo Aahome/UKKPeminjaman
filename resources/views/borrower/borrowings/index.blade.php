@@ -67,10 +67,10 @@
                         <tr>
                             <th class="px-6 py-3 text-center w-12">No</th>
                             <th class="px-6 py-3 text-left">Tool & Quantity</th>
-                            <th class="px-6 py-3 text-left">Price & Fine</th>
+                            <th class="px-6 py-3 text-left">Total Borrow Price</th>
                             <th class="px-6 py-3 text-left">Borrow Date</th>
                             <th class="px-6 py-3 text-left">Due Date</th>
-                            <th class="px-6 py-3 text-right">Total</th>
+                            <th class="px-6 py-3 text-right">Fine</th>
                             <th class="px-6 py-3 text-center">Status</th>
                             <th class="px-6 py-3 text-center">Created At</th>
                             <th class="px-6 py-3 text-center w-48">Action</th>
@@ -93,16 +93,6 @@
                                 $fine = DB::selectOne("
                                 SELECT fine_count(?, ?, ?) AS total
                                 ", [$due, $today, $totalPrice])->total;
-                            } else {
-                                // $fine = DB::selectOne("
-                                // SELECT fine_count(?, ?, ?, ?) AS total
-                                // ", [$due, $today, $borrowing->quantity, $borrowing->tool->price])->total;
-                                
-                                // $totalPrice = DB::selectOne("
-                                // SELECT total_price(?, ?) AS total
-                                // ", [$borrowing->quantity, $borrowing->tool->price])->total;
-
-                                
                             }
                         @endphp
                             <tr class="hover:bg-slate-50">
@@ -116,8 +106,7 @@
                                 </td>
 
                                 <td class="px-6 py-4 font-medium text-slate-800">
-                                    Rp {{ number_format($borrowing->returnData->total_price ?? ($totalPrice ?? 0 ) , 0, ',', '.') }} | Rp {{ number_format($borrowing->returnData?->fine ?? ($fine ?? 0 ), 0, ',', '.') }}
-                                </td>
+                                    Rp {{ number_format($borrowing->returnData->total_price ?? ($totalPrice ?? 0 ) , 0, ',', '.') }}
 
                                 <td class="px-6 py-4">
                                     {{ \Carbon\Carbon::parse($borrowing->borrow_date)->format('d M Y') }}
@@ -130,7 +119,7 @@
                                 <td class="px-6 py-4 text-right">
                                     {{-- {{ $borrowing->returnData?->fine ?? ($fine ?? '-') }} --}}
                                     
-                                Rp {{ number_format($borrowing->returnData?->fine ?? ($fine ?? 0 ) + ($borrowing->returnData->total_price ?? ($totalPrice ?? 0 )), 0, ',', '.') }}
+                                Rp {{ number_format($borrowing->returnData?->fine ?? ($fine ?? 0 ), 0, ',', '.') }}
                                 </td>
 
                                 <td class="px-6 py-4 text-center">
