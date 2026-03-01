@@ -142,7 +142,8 @@
                                 <td class="px-6 py-4 text-center">
                                     @if ($tool->stock > 0)
                                         <button type="button" data-id="{{ $tool->id }}"
-                                            data-name="{{ $tool->tool_name }}" onclick="openCreateCard(this)"
+                                            data-name="{{ $tool->tool_name }}" data-stock="{{ $tool->stock }}"
+                                            onclick="openCreateCard(this)"
                                             class="px-3 py-1 text-xs rounded-md bg-blue-100 text-blue-700 hover:bg-blue-200">
                                             Borrow
                                         </button>
@@ -177,8 +178,9 @@
             form.action = `/borrower/borrowings/${id}`;
 
             document.getElementById('createBorrowCard').hidden = false;
-
+            
             document.getElementById('createToolId').value = id;
+            document.getElementById('createQuantity').max = button.dataset.stock;
             document.getElementById('createToolName').value = button.dataset.name;
         }
 

@@ -102,7 +102,7 @@ class BorrowController extends Controller
         if ($request->status === 'returned') {
             $today    = Carbon::today();
             $dueDate  = Carbon::parse($borrowing->due_date);
-            
+
             $totalPrice = DB::selectOne("
             SELECT total_price(?, ?) AS total
             ", [$request->quantity, $tool->price])->total;
@@ -145,12 +145,28 @@ class BorrowController extends Controller
             'rejection_reason'  => 'nullable|string|max:255',
         ]);
 
+
         // Validasi tambahan untuk rejection_reason
-        $validator->after(function ($validator) use ($request) {
+        $validator->after(function ($validator) use ($request, $borrow) {
 
             $tool = Tool::find($request->tool_id);
+            $oldStatus = $borrow->status;
 
-            if ($tool && $request->quantity > $tool->stock && $request->status === 'approved') {
+            if ($oldStatus === 'approved' || $oldStatus === 'returned' || ($oldStatus === 'approved' && $request->status === 'returned')) {
+
+                $toolChanged = $request->tool_id != $borrow->tool_id;
+
+                $qtyChanged  = $request->quantity != $borrow->quantity;
+
+                if ($toolChanged || $qtyChanged) {
+                    $validator->errors()->add(
+                        'tool_id',
+                        'Revert status to Pending / Rejected before changing tool or quantity.'
+                    );
+                }
+            }
+
+            if ($tool && $request->quantity > $tool->stock && $oldStatus !== 'approved' && $request->status === 'approved') {
                 $validator->errors()->add(
                     'quantity',
                     'Quantity exceeds available stock.'
@@ -182,7 +198,6 @@ class BorrowController extends Controller
                 ->with('error', 'Please check the form. Some fields are invalid.');
         }
 
-
         $oldStatus = $borrow->status;
         $newStatus = $request->status;
         $qty       = $request->quantity;
@@ -197,6 +212,11 @@ class BorrowController extends Controller
 
         // Jika approved berubah ke status lain selain approved/returned, kembalikan stok
         if ($oldStatus === 'approved' && !in_array($newStatus, ['approved', 'returned'])) {
+            $oldTool->increment('stock', $qty);
+        }
+        
+        // Tambah kembali stok jika status tetap 'returned' tetapi data return sebelumnya belum ada
+        if ($newStatus === 'returned' && ($oldStatus === 'returned' && !$borrow->returnData)) {
             $oldTool->increment('stock', $qty);
         }
 

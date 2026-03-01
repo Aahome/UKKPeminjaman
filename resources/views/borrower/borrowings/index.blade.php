@@ -79,22 +79,27 @@
 
                     <tbody class="divide-y divide-slate-200">
                         @forelse ($borrowings as $borrowing)
+                            @php
+                                $today = \Carbon\Carbon::today();
+                                $due = \Carbon\Carbon::parse($borrowing->due_date);
 
-                        @php
-                            $today = \Carbon\Carbon::today();
-                            $due = \Carbon\Carbon::parse($borrowing->due_date);
-
-                            if (!$borrowing->returnData) {
-                                // Return already confirmed → use stored fine
-                                $totalPrice = DB::selectOne("
+                                if (!$borrowing->returnData) {
+                                    // Return already confirmed → use stored fine
+                                    $totalPrice = DB::selectOne(
+                                        "
                                 SELECT total_price(?, ?) AS total
-                                ", [$borrowing->quantity, $borrowing->tool->price])->total;
+                                ",
+                                        [$borrowing->quantity, $borrowing->tool->price],
+                                    )->total;
 
-                                $fine = DB::selectOne("
+                                    $fine = DB::selectOne(
+                                        "
                                 SELECT fine_count(?, ?, ?) AS total
-                                ", [$due, $today, $totalPrice])->total;
-                            }
-                        @endphp
+                                ",
+                                        [$due, $today, $totalPrice],
+                                    )->total;
+                                }
+                            @endphp
                             <tr class="hover:bg-slate-50">
 
                                 <td class="px-6 py-4">
@@ -106,7 +111,8 @@
                                 </td>
 
                                 <td class="px-6 py-4 font-medium text-slate-800">
-                                    Rp {{ number_format($borrowing->returnData->total_price ?? ($totalPrice ?? 0 ) , 0, ',', '.') }}
+                                    Rp
+                                    {{ number_format($borrowing->returnData->total_price ?? ($totalPrice ?? 0), 0, ',', '.') }}
 
                                 <td class="px-6 py-4">
                                     {{ \Carbon\Carbon::parse($borrowing->borrow_date)->format('d M Y') }}
@@ -118,8 +124,8 @@
 
                                 <td class="px-6 py-4 text-right">
                                     {{-- {{ $borrowing->returnData?->fine ?? ($fine ?? '-') }} --}}
-                                    
-                                Rp {{ number_format($borrowing->returnData?->fine ?? ($fine ?? 0 ), 0, ',', '.') }}
+
+                                    Rp {{ number_format($borrowing->returnData?->fine ?? ($fine ?? 0), 0, ',', '.') }}
                                 </td>
 
                                 <td class="px-6 py-4 text-center">
@@ -150,7 +156,7 @@
                                             <button type="button" data-id="{{ $borrowing->id }}"
                                                 data-name="{{ $borrowing->tool->tool_name }}"
                                                 data-borrow="{{ $borrowing->borrow_date }}"
-                                                data-due="{{ $borrowing->due_date }}"
+                                                data-due="{{ $borrowing->due_date }}" data-stock="{{ $borrowing->tool->stock }}"
                                                 data-quantity="{{ $borrowing->quantity }}" onclick="openEditCard(this)"
                                                 class="px-3 py-1 text-xs rounded-md bg-amber-100 text-amber-700 hover:bg-amber-200">
                                                 Edit
@@ -242,9 +248,9 @@
 
             document.getElementById('editToolName').value = button.dataset.name;
             document.getElementById('editQuantity').value = button.dataset.quantity;
+            document.getElementById('editQuantity').max = button.dataset.stock;
             document.getElementById('editBorrowDate').value = button.dataset.borrow;
             document.getElementById('editDueDate').value = button.dataset.due;
-
             document.getElementById('editBorrowCard').hidden = false;
         }
 
